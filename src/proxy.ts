@@ -15,7 +15,7 @@ const authMiddleware = clerkMiddleware(async (auth, req) => {
   }
 });
 
-export function proxy(request: NextRequest, _event: unknown) {
+export function proxy(request: NextRequest, _event: any) {
   return authMiddleware(request, _event);
 }
 
