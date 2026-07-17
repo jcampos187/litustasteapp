@@ -1,0 +1,404 @@
+@import "tailwindcss";
+
+/* ─── Enable class-based dark mode for Tailwind v4 ────────────── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Litus Taste — Premium Culinary Palette ────────────────────
+   Inspired by: elviajeculinario.com
+   Deep forest greens, warm terracotta, elegant gold accents
+*/
+
+
+@theme inline {
+  /* ── Brand Greens ── */
+  --color-lt-green-deep: #1B4332;
+  --color-lt-green: #2D6A4F;
+  --color-lt-green-mid: #40916C;
+  --color-lt-green-light: #52B788;
+  --color-lt-green-pale: #95D5B2;
+
+  /* ── Olive family (used in components) ── */
+  --color-lt-olive: #5A7D6A;
+  --color-lt-olive-dark: #3D5A4A;
+  --color-lt-olive-light: #7A9D8A;
+
+  /* ── Sage ── */
+  --color-lt-sage: #A3B8A8;
+
+  /* ── Warm Browns (text & headings) ── */
+  --color-lt-warm-brown: #4A3728;
+  --color-lt-warm-brown-light: #6B5443;
+
+  /* ── Charcoal (body text) ── */
+  --color-lt-charcoal: #3D3733;
+  --color-lt-charcoal-dark: #1C1917;
+
+  /* ── Terracotta ── */
+  --color-lt-terracotta: #C3734E;
+  --color-lt-terracotta-dark: #A85D3A;
+  --color-lt-terracotta-light: #D4946F;
+
+  /* ── Gold ── */
+  --color-lt-gold: #D4A017;
+  --color-lt-gold-light: #E8C45A;
+
+  /* ── Cream / Neutral backgrounds ── */
+  --color-lt-cream: #FDFBF7;
+  --color-lt-cream-dark: #F5F0E8;
+
+  /* ── Warm & Cool Grays ── */
+  --color-lt-warm-gray: #8B8178;
+  --color-lt-cool-gray: #6B7280;
+
+  /* ── Dark ── */
+  --color-lt-dark: #1C1917;
+  --color-lt-dark-light: #292524;
+
+  /* ── Basics ── */
+  --color-background: #FDFBF7;
+  --color-foreground: #3D3733;
+  --color-card: #FFFFFF;
+  --color-card-border: #E8E3DC;
+  --color-accent: #C3734E;
+  --color-accent-hover: #A85D3A;
+
+  /* ── Fonts (loaded via next/font) ── */
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
+}
+
+/* ─── Base Styles ─────────────────────────────────────────────── */
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Premium Button Styles ───────────────────────────────────── */
+.lt-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  background: var(--color-lt-green);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.lt-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.1) 100%);
+  pointer-events: none;
+}
+
+.lt-btn:hover {
+  background: var(--color-lt-green-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(45, 106, 79, 0.3);
+}
+
+.lt-btn:active {
+  transform: translateY(0);
+}
+
+.lt-btn-secondary {
+  background: white;
+  color: var(--color-lt-green);
+  border: 2px solid var(--color-lt-green);
+  box-shadow: none;
+}
+
+.lt-btn-secondary:hover {
+  background: var(--color-lt-green);
+  color: white;
+  box-shadow: 0 8px 25px rgba(45, 106, 79, 0.2);
+}
+
+.lt-btn-outline {
+  background: transparent;
+  color: var(--color-lt-dark);
+  border: 2px solid var(--color-card-border);
+}
+
+.lt-btn-outline:hover {
+  border-color: var(--color-lt-green);
+  color: var(--color-lt-green);
+  background: rgba(45, 106, 79, 0.04);
+  transform: translateY(-2px);
+}
+
+/* ─── Card Styles ─────────────────────────────────────────────── */
+.lt-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-card-border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lt-card:hover {
+  border-color: var(--color-lt-green-pale);
+  box-shadow: 0 12px 40px rgba(45, 106, 79, 0.08);
+  transform: translateY(-4px);
+}
+
+/* ─── Image Reveal on Cards ───────────────────────────────────── */
+.lt-card-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.lt-card-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.06), transparent 50%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.lt-card:hover .lt-card-image::after {
+  opacity: 1;
+}
+
+.lt-card-image img {
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lt-card:hover .lt-card-image img {
+  transform: scale(1.06);
+}
+
+/* ─── Dietary Tag Badges ──────────────────────────────────────── */
+.lt-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.lt-tag-vegan { background: #E8F5E9; color: #2E7D32; }
+.lt-tag-vegetarian { background: #E8F5E9; color: #388E3C; }
+.lt-tag-gluten-free, .lt-tag-sin-gluten { background: #FFF8E1; color: #E65100; }
+.lt-tag-keto { background: #FCE4EC; color: #AD1457; }
+.lt-tag-high-protein, .lt-tag-alta-proteina { background: #E3F2FD; color: #1565C0; }
+.lt-tag-low-carb, .lt-tag-bajos-carbohidratos { background: #F3E5F5; color: #6A1B9A; }
+.lt-tag-dairy-free, .lt-tag-sin-lacteos { background: #E0F2F1; color: #00695C; }
+.lt-tag-sugar-free, .lt-tag-sin-azucar { background: #FBE9E7; color: #BF360C; }
+
+/* ─── Gradient Text ───────────────────────────────────────────── */
+.lt-gradient-text {
+  background: linear-gradient(135deg, var(--color-lt-green), var(--color-lt-green-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.lt-gradient-warm {
+  background: linear-gradient(135deg, var(--color-lt-terracotta), var(--color-lt-gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Section Decorative Divider ──────────────────────────────── */
+.lt-divider {
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-lt-green), var(--color-lt-green-light), var(--color-lt-green-pale), var(--color-lt-green-light), var(--color-lt-green));
+  opacity: 0.3;
+}
+
+/* ─── Header Underline Effect ─────────────────────────────────── */
+.lt-nav-link {
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.lt-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--color-lt-green);
+  border-radius: 2px;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lt-nav-link:hover::after {
+  width: 100%;
+}
+
+/* ─── Quantity Selector Buttons ────────────────────────────────── */
+.lt-qty-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--color-card-border);
+  background: var(--color-card);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  color: var(--color-lt-dark);
+}
+
+.lt-qty-btn:hover {
+  border-color: var(--color-lt-green);
+  color: var(--color-lt-green);
+  background: rgba(45, 106, 79, 0.04);
+}
+
+/* ─── Cart Badge ──────────────────────────────────────────────── */
+.lt-cart-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--color-lt-green);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ─── Animations ──────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes softPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.4s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.35s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.35s ease-out;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* ─── Staggered animation delays ──────────────────────────────── */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+/* ─── Cart Overlay ────────────────────────────────────────────── */
+.lt-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 25, 23, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 40;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ─── Skeleton Loading ────────────────────────────────────────── */
+.lt-skeleton {
+  background: linear-gradient(90deg, var(--color-card-border) 25%, transparent 50%, var(--color-card-border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─── Stats / Metric Card ─────────────────────────────────────── */
+.lt-stat-card {
+  background: white;
+  border: 1px solid var(--color-card-border);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s ease;
+}
+
+.lt-stat-card:hover {
+  border-color: var(--color-lt-green-pale);
+  box-shadow: 0 8px 30px rgba(45, 106, 79, 0.06);
+  transform: translateY(-2px);
+}
+
+/* ─── Focus Styles ────────────────────────────────────────────── */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: var(--color-lt-green-mid) !important;
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
+}
+
+/* ─── Section transitions (landing page only) ────────────────── */
+.lt-section-animate {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
