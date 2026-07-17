@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import type { NextRequest } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -8,11 +9,15 @@ const isPublicRoute = createRouteMatcher([
   "/api/auth(.*)",
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
+const authMiddleware = clerkMiddleware(async (auth, req) => {
   if (!isPublicRoute(req)) {
     await auth.protect();
   }
 });
+
+export function proxy(request: NextRequest, _event: unknown) {
+  return authMiddleware(request, _event);
+}
 
 export const config = {
   matcher: [
