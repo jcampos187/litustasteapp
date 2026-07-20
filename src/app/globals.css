@@ -3,44 +3,47 @@
 /* ─── Enable class-based dark mode for Tailwind v4 ────────────── */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ─── Litus Taste — Premium Culinary Palette ────────────────────
-   Inspired by: elviajeculinario.com
-   Deep forest greens, warm terracotta, elegant gold accents
+/* ─── Litus Taste — Vivid Culinary Palette ──────────────────────
+   Inspired by: modern food delivery brands & Latin American vibrancy
+   Bold greens, warm terracotta, amber-gold accents
 */
 
-
 @theme inline {
-  /* ── Brand Greens ── */
-  --color-lt-green-deep: #1B4332;
-  --color-lt-green: #2D6A4F;
-  --color-lt-green-mid: #40916C;
-  --color-lt-green-light: #52B788;
-  --color-lt-green-pale: #95D5B2;
+  /* ── Brand Greens (more saturated & vibrant) ── */
+  --color-lt-green-deep: #0A5C36;
+  --color-lt-green: #15803D;
+  --color-lt-green-mid: #22A34A;
+  --color-lt-green-light: #3BCB6A;
+  --color-lt-green-pale: #86EFAD;
 
-  /* ── Olive family (used in components) ── */
-  --color-lt-olive: #5A7D6A;
-  --color-lt-olive-dark: #3D5A4A;
-  --color-lt-olive-light: #7A9D8A;
+  /* ── Olive family ── */
+  --color-lt-olive: #4A7C5C;
+  --color-lt-olive-dark: #2D5A3E;
+  --color-lt-olive-light: #6B9E7C;
 
   /* ── Sage ── */
-  --color-lt-sage: #A3B8A8;
+  --color-lt-sage: #94A89C;
 
   /* ── Warm Browns (text & headings) ── */
-  --color-lt-warm-brown: #4A3728;
-  --color-lt-warm-brown-light: #6B5443;
+  --color-lt-warm-brown: #3D2E24;
+  --color-lt-warm-brown-light: #5C4A3A;
 
   /* ── Charcoal (body text) ── */
   --color-lt-charcoal: #3D3733;
   --color-lt-charcoal-dark: #1C1917;
 
-  /* ── Terracotta ── */
-  --color-lt-terracotta: #C3734E;
-  --color-lt-terracotta-dark: #A85D3A;
-  --color-lt-terracotta-light: #D4946F;
+  /* ── Terracotta (more vibrant / appetite-stimulating) ── */
+  --color-lt-terracotta: #D4652F;
+  --color-lt-terracotta-dark: #B84A1A;
+  --color-lt-terracotta-light: #E88554;
+
+  /* ── Amber (new vivid accent) ── */
+  --color-lt-amber: #D97706;
+  --color-lt-amber-light: #F59E0B;
 
   /* ── Gold ── */
-  --color-lt-gold: #D4A017;
-  --color-lt-gold-light: #E8C45A;
+  --color-lt-gold: #E8A317;
+  --color-lt-gold-light: #F0C75E;
 
   /* ── Cream / Neutral backgrounds ── */
   --color-lt-cream: #FDFBF7;
@@ -59,8 +62,8 @@
   --color-foreground: #3D3733;
   --color-card: #FFFFFF;
   --color-card-border: #E8E3DC;
-  --color-accent: #C3734E;
-  --color-accent-hover: #A85D3A;
+  --color-accent: #D4652F;
+  --color-accent-hover: #B84A1A;
 
   /* ── Fonts (loaded via next/font) ── */
   --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -213,6 +216,13 @@ body {
 }
 
 .lt-gradient-warm {
+  background: linear-gradient(135deg, var(--color-lt-terracotta), var(--color-lt-amber));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.lt-gradient-fire {
   background: linear-gradient(135deg, var(--color-lt-terracotta), var(--color-lt-gold));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -336,38 +346,10 @@ body {
   50% { opacity: 0.7; }
 }
 
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes spin-reverse {
-  from { transform: rotate(360deg); }
-  to { transform: rotate(0deg); }
-}
-
-@keyframes sway {
-  0%, 100% { transform: rotate(-3deg); }
-  50% { transform: rotate(3deg); }
-}
-
-@keyframes steam {
-  0% { opacity: 0; transform: translateY(0) scale(1); }
-  25% { opacity: 0.3; transform: translateY(-10px) scale(1.1); }
-  50% { opacity: 0.15; transform: translateY(-20px) scale(0.9); }
-  75% { opacity: 0.2; transform: translateY(-30px) scale(1.05); }
-  100% { opacity: 0; transform: translateY(-40px) scale(0.8); }
-}
-
 @keyframes gradient-shift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
-}
-
-@keyframes scrollWheel {
-  0%, 100% { opacity: 1; transform: translateX(-50%) translateY(0); }
-  50% { opacity: 0.3; transform: translateX(-50%) translateY(8px); }
 }
 
 .animate-fade-in-up {
@@ -402,30 +384,7 @@ body {
   animation: float-fast 3.5s ease-in-out infinite;
 }
 
-.animate-spin-slow {
-  animation: spin-slow 30s linear infinite;
-}
 
-.animate-spin-reverse {
-  animation: spin-reverse 25s linear infinite;
-}
-
-.animate-sway {
-  animation: sway 4s ease-in-out infinite;
-  transform-origin: bottom center;
-}
-
-.animate-steam {
-  animation: steam 3s ease-out infinite;
-}
-
-.animate-steam-delayed {
-  animation: steam 3.5s ease-out 0.5s infinite;
-}
-
-.animate-scroll-wheel {
-  animation: scrollWheel 2s ease-in-out infinite;
-}
 
 /* ─── Staggered animation delays ──────────────────────────────── */
 .delay-100 { animation-delay: 100ms; }
@@ -473,8 +432,44 @@ body {
 
 .lt-stat-card:hover {
   border-color: var(--color-lt-green-pale);
-  box-shadow: 0 8px 30px rgba(45, 106, 79, 0.06);
+  box-shadow: 0 8px 30px rgba(21, 128, 61, 0.06);
   transform: translateY(-2px);
+}
+
+/* ─── Hero image decorative frame ─────────────────────────────── */
+.lt-hero-frame {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.lt-hero-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(135deg, var(--color-lt-green-pale), var(--color-lt-terracotta-light), var(--color-lt-amber-light));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ─── Image shine overlay ─────────────────────────────────────── */
+.lt-img-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.lt-img-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* ─── Focus Styles ────────────────────────────────────────────── */
