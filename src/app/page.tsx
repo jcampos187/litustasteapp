@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { meals, weeklyMenus, weeklyMenuItems, dietaryTags } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import MealCard from "@/components/MealCard";
+import ScrollReveal from "@/components/ScrollReveal";
 
 async function getActiveMenu() {
   try {
@@ -183,7 +184,7 @@ export default async function Home() {
       {/* ═══════════════════════════════════════════════════════════
           HOW IT WORKS — 3 steps
          ═══════════════════════════════════════════════════════════ */}
-      <section className="relative bg-white px-6 py-24 sm:py-28">
+      <ScrollReveal variant="fade-up" className="relative bg-white px-6 py-24 sm:py-28">
         {/* Decorative top line */}
         <div className="lt-divider absolute left-0 right-0 top-0" />
 
@@ -225,73 +226,74 @@ export default async function Home() {
                 color: "from-lt-olive/10 to-lt-green-pale/10",
                 iconBg: "bg-lt-olive/10",
               },
-            ].map((item) => (
-              <div
-                key={item.step}
-                className="group relative overflow-hidden rounded-2xl border border-lt-card-border bg-white p-8 transition-all duration-300 hover:-translate-y-1.5 hover:border-lt-green-pale/50 hover:shadow-lg hover:shadow-lt-green/5"
-              >
-                {/* Step number */}
-                <span className="font-[family-name:var(--font-display)] absolute -right-4 -top-4 text-[5rem] font-bold leading-none text-lt-card-border/30 select-none">
-                  {item.step}
-                </span>
+            ].map((item, i) => (
+              <ScrollReveal key={item.step} variant="fade-up" delay={i * 120} duration={500}>
+                <div className="group relative overflow-hidden rounded-2xl border border-lt-card-border bg-white p-8 transition-all duration-300 hover:-translate-y-1.5 hover:border-lt-green-pale/50 hover:shadow-lg hover:shadow-lt-green/5">
+                  {/* Step number */}
+                  <span className="font-[family-name:var(--font-display)] absolute -right-4 -top-4 text-[5rem] font-bold leading-none text-lt-card-border/30 select-none">
+                    {item.step}
+                  </span>
 
-                {/* Icon */}
-                <div
-                  className={`mb-5 flex h-14 w-14 items-center justify-center rounded-xl text-2xl ${item.iconBg}`}
-                >
-                  {item.emoji}
+                  {/* Icon */}
+                  <div
+                    className={`mb-5 flex h-14 w-14 items-center justify-center rounded-xl text-2xl ${item.iconBg}`}
+                  >
+                    {item.emoji}
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-xl font-bold text-lt-warm-brown">
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-lt-charcoal/60">
+                    {item.desc}
+                  </p>
                 </div>
-
-                {/* Content */}
-                <h3 className="text-xl font-bold text-lt-warm-brown">
-                  {item.title}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-lt-charcoal/60">
-                  {item.desc}
-                </p>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
-      </section>
+      </ScrollReveal>
 
       {/* ═══════════════════════════════════════════════════════════
           WEEKLY MENU PREVIEW
          ═══════════════════════════════════════════════════════════ */}
-      <section className="relative bg-lt-cream px-6 py-24 sm:py-28">
+      <ScrollReveal variant="fade-up" className="relative bg-lt-cream px-6 py-24 sm:py-28">
         <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
-            <div>
-              <span className="mb-2 inline-block text-xs font-semibold uppercase tracking-[0.15em] text-lt-olive">
-                Menú Semanal
-              </span>
-              <h2 className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-lt-warm-brown sm:text-4xl">
-                {activeMenu
-                  ? "Selecciona tus favoritos"
-                  : "Menú disponible pronto"}
-              </h2>
-              <p className="mt-3 max-w-xl text-base text-lt-charcoal/60">
-                {activeMenu
-                  ? "Elige los platillos que más te gusten para esta semana"
-                  : "El menú se publica pronto. ¡Regístrate para recibir notificaciones!"}
-              </p>
+          <ScrollReveal variant="fade-up" delay={100}>
+            <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
+              <div>
+                <span className="mb-2 inline-block text-xs font-semibold uppercase tracking-[0.15em] text-lt-olive">
+                  Menú Semanal
+                </span>
+                <h2 className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-lt-warm-brown sm:text-4xl">
+                  {activeMenu
+                    ? "Selecciona tus favoritos"
+                    : "Menú disponible pronto"}
+                </h2>
+                <p className="mt-3 max-w-xl text-base text-lt-charcoal/60">
+                  {activeMenu
+                    ? "Elige los platillos que más te gusten para esta semana"
+                    : "El menú se publica pronto. ¡Regístrate para recibir notificaciones!"}
+                </p>
+              </div>
+              {activeMenu && (
+                <Link
+                  href="/menu"
+                  className="lt-btn-outline inline-flex h-12 shrink-0 items-center gap-2 rounded-xl px-6 text-sm font-semibold"
+                >
+                  Ver menú completo
+                  <span className="text-lg">→</span>
+                </Link>
+              )}
             </div>
-            {activeMenu && (
-              <Link
-                href="/menu"
-                className="lt-btn-outline inline-flex h-12 shrink-0 items-center gap-2 rounded-xl px-6 text-sm font-semibold"
-              >
-                Ver menú completo
-                <span className="text-lg">→</span>
-              </Link>
-            )}
-          </div>
+          </ScrollReveal>
 
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {activeMenu?.items.slice(0, 6).map((item, i) => (
-              <div key={item.id} className="animate-fade-in-up" style={{ animationDelay: `${i * 80}ms` }}>
+              <ScrollReveal key={item.id} variant="fade-up" delay={i * 100 + 200} duration={500}>
                 <MealCard meal={item} tags={activeMenu.tags} />
-              </div>
+              </ScrollReveal>
             ))}
             {!activeMenu && (
               <div className="col-span-full py-20 text-center">
@@ -316,94 +318,109 @@ export default async function Home() {
             )}
           </div>
         </div>
-      </section>
+      </ScrollReveal>
 
       {/* ═══════════════════════════════════════════════════════════
           STORY / ABOUT
          ═══════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-white px-6 py-24 sm:py-28">
+      <ScrollReveal variant="fade-up" className="relative overflow-hidden bg-white px-6 py-24 sm:py-28">
         {/* Decorative elements */}
         <div className="pointer-events-none absolute -right-32 -top-32 h-80 w-80 rounded-full bg-lt-terracotta/5 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-32 -left-32 h-80 w-80 rounded-full bg-lt-green/5 blur-3xl" />
 
         <div className="relative mx-auto max-w-4xl text-center">
-          <span className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-lt-terracotta/10 to-lt-gold/10 text-3xl">
-            👨‍🍳
-          </span>
-
-          <h2 className="mt-6 font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-lt-warm-brown sm:text-4xl">
-            Hecho con ingredientes
-            <br />
-            <span className="lt-gradient-text">frescos y mucho amor</span>
-          </h2>
-
-          <div className="mx-auto mt-8 max-w-2xl space-y-5 text-left text-base leading-relaxed text-lt-charcoal/70 sm:text-center">
-            <p>
-              En Litus Taste creemos que la buena comida empieza con buenos
-              ingredientes. Seleccionamos productos frescos y naturales para
-              preparar cada platillo con dedicación.
-            </p>
-            <p className="sm:text-lg sm:leading-relaxed">
-              Nuestro objetivo es hacerte la vida más fácil: recibe tus comidas
-              listas, solo calienta y disfruta. <strong>Más tiempo para lo que importa.</strong>
-            </p>
-          </div>
-
-          {/* Divider with emblem */}
-          <div className="mx-auto mt-10 flex max-w-xs items-center gap-4">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-lt-card-border to-transparent" />
-            <span className="shrink-0 font-[family-name:var(--font-display)] text-2xl italic text-lt-olive">
-              ♡
+          <ScrollReveal variant="fade-up" delay={100}>
+            <span className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-lt-terracotta/10 to-lt-gold/10 text-3xl">
+              👨‍🍳
             </span>
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-lt-card-border to-transparent" />
-          </div>
+          </ScrollReveal>
 
-          <p className="mt-4 text-sm font-medium text-lt-olive-dark">
-            🇨🇷 Hecho en Costa Rica con mucho amor
-          </p>
+          <ScrollReveal variant="fade-up" delay={200}>
+            <h2 className="mt-6 font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-lt-warm-brown sm:text-4xl">
+              Hecho con ingredientes
+              <br />
+              <span className="lt-gradient-text">frescos y mucho amor</span>
+            </h2>
+          </ScrollReveal>
+
+          <ScrollReveal variant="fade-up" delay={300}>
+            <div className="mx-auto mt-8 max-w-2xl space-y-5 text-left text-base leading-relaxed text-lt-charcoal/70 sm:text-center">
+              <p>
+                En Litus Taste creemos que la buena comida empieza con buenos
+                ingredientes. Seleccionamos productos frescos y naturales para
+                preparar cada platillo con dedicación.
+              </p>
+              <p className="sm:text-lg sm:leading-relaxed">
+                Nuestro objetivo es hacerte la vida más fácil: recibe tus comidas
+                listas, solo calienta y disfruta. <strong>Más tiempo para lo que importa.</strong>
+              </p>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal variant="fade-up" delay={400}>
+            {/* Divider with emblem */}
+            <div className="mx-auto mt-10 flex max-w-xs items-center gap-4">
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-lt-card-border to-transparent" />
+              <span className="shrink-0 font-[family-name:var(--font-display)] text-2xl italic text-lt-olive">
+                ♡
+              </span>
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-lt-card-border to-transparent" />
+            </div>
+
+            <p className="mt-4 text-sm font-medium text-lt-olive-dark">
+              🇨🇷 Hecho en Costa Rica con mucho amor
+            </p>
+          </ScrollReveal>
         </div>
-      </section>
+      </ScrollReveal>
 
       {/* ═══════════════════════════════════════════════════════════
           CTA — Final Call to Action
          ═══════════════════════════════════════════════════════════ */}
-      <section className="relative px-6 py-24 sm:py-28">
+      <ScrollReveal variant="fade-up" className="relative px-6 py-24 sm:py-28">
         {/* Background with subtle gradient */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-lt-cream via-white to-lt-cream" />
         <div className="pointer-events-none absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-lt-green/5 blur-[120px]" />
 
         <div className="relative mx-auto max-w-2xl text-center">
-          <h2 className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-lt-warm-brown sm:text-4xl">
-            ¿Listo para comer rico
-            <br />
-            <span className="lt-gradient-text">esta semana?</span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-lg text-base text-lt-charcoal/60">
-            Haz tu pedido antes del corte y recibe tus comidas frescas y listas
-            para disfrutar.
-          </p>
+          <ScrollReveal variant="fade-up" delay={100}>
+            <h2 className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-lt-warm-brown sm:text-4xl">
+              ¿Listo para comer rico
+              <br />
+              <span className="lt-gradient-text">esta semana?</span>
+            </h2>
+          </ScrollReveal>
 
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              href="/menu"
-              className="lt-btn group relative inline-flex h-14 w-full items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-lt-green px-9 text-base font-semibold text-white shadow-xl shadow-lt-green/25 transition-all hover:bg-lt-green-deep hover:shadow-2xl hover:shadow-lt-green/30 sm:w-auto"
-            >
-              <span className="relative z-10">Ver Menú</span>
-              <span className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">→</span>
-              <span className="absolute inset-0 -translate-x-full skew-x-12 bg-gradient-to-r from-white/0 via-white/10 to-white/0 transition-transform duration-700 group-hover:translate-x-full" />
-            </Link>
+          <ScrollReveal variant="fade-up" delay={200}>
+            <p className="mx-auto mt-4 max-w-lg text-base text-lt-charcoal/60">
+              Haz tu pedido antes del corte y recibe tus comidas frescas y listas
+              para disfrutar.
+            </p>
+          </ScrollReveal>
 
-            {!userId && (
+          <ScrollReveal variant="fade-up" delay={300}>
+            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
-                href="/auth/sign-up"
-                className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-xl border-2 border-lt-card-border px-8 text-base font-semibold text-lt-warm-brown transition-all hover:border-lt-terracotta/50 hover:bg-lt-terracotta/5 hover:text-lt-terracotta sm:w-auto"
+                href="/menu"
+                className="lt-btn group relative inline-flex h-14 w-full items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-lt-green px-9 text-base font-semibold text-white shadow-xl shadow-lt-green/25 transition-all hover:bg-lt-green-deep hover:shadow-2xl hover:shadow-lt-green/30 sm:w-auto"
               >
-                Crear Cuenta Gratis
+                <span className="relative z-10">Ver Menú</span>
+                <span className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">→</span>
+                <span className="absolute inset-0 -translate-x-full skew-x-12 bg-gradient-to-r from-white/0 via-white/10 to-white/0 transition-transform duration-700 group-hover:translate-x-full" />
               </Link>
-            )}
-          </div>
+
+              {!userId && (
+                <Link
+                  href="/auth/sign-up"
+                  className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-xl border-2 border-lt-card-border px-8 text-base font-semibold text-lt-warm-brown transition-all hover:border-lt-terracotta/50 hover:bg-lt-terracotta/5 hover:text-lt-terracotta sm:w-auto"
+                >
+                  Crear Cuenta Gratis
+                </Link>
+              )}
+            </div>
+          </ScrollReveal>
         </div>
-      </section>
+      </ScrollReveal>
     </>
   );
 }
