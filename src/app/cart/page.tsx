@@ -11,7 +11,7 @@ import ProfileCompletionBanner from "@/components/ProfileCompletionBanner";
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, totalPrice, clearCart } = useCart();
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -19,6 +19,13 @@ export default function CartPage() {
   const [profileComplete, setProfileComplete] = useState(true);
   const [profileChecked, setProfileChecked] = useState(false);
   const [isApproved, setIsApproved] = useState(true);
+
+  // Redirect guests to sign-in
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push("/auth/sign-in");
+    }
+  }, [isLoaded, isSignedIn, router]);
 
   // Check if user has completed their profile and is approved
   useEffect(() => {
