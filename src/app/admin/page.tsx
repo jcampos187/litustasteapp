@@ -1,11 +1,10 @@
 import { db } from "@/db";
-import { orders, orderItems, users, weeklyMenus } from "@/db/schema";
-import { eq, and, desc, sql, count } from "drizzle-orm";
-import { formatCRC, getOrderStatusLabel } from "@/lib/utils";
+import { orders, users, weeklyMenus } from "@/db/schema";
+import { eq, and, desc, count } from "drizzle-orm";
+import { getOrderStatusLabel } from "@/lib/utils";
 import {
   ShoppingBag,
   Users,
-  UtensilsCrossed,
   TrendingUp,
   AlertCircle,
 } from "lucide-react";

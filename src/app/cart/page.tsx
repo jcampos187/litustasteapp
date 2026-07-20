@@ -1,6 +1,6 @@
 "use client";
 
-import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag, AlertCircle, Clock } from "lucide-react";
+import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag, Clock } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
 import { formatCRC } from "@/lib/utils";
 import Link from "next/link";

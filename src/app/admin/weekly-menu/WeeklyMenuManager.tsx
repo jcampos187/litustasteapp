@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarDays, Save, Trash2, Send, Clock } from "lucide-react";
+import { CalendarDays, Save, Trash2, Send } from "lucide-react";
 import { formatCRC } from "@/lib/utils";
 
 interface Meal {

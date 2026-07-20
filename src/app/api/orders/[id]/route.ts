@@ -5,6 +5,16 @@ import { orders, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { sendOrderReceivedEmail, sendOrderCompletedEmail } from "@/lib/email";
 
+/**
+ * When sending emails to customers (order received, completed) the system
+ * sends directly to the customer's email address.
+ *
+ * ⚠️ Requires a verified domain in Resend (not just the onboarding@resend.dev
+ * sender). Until a custom domain (e.g., litustaste.com) is verified, Resend's
+ * free tier only delivers to the verified admin email. See:
+ *   https://resend.com/domains
+ */
+
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -64,20 +74,23 @@ export async function PATCH(
       .limit(1);
 
     const customerName = orderWithCustomer?.customerName || "Cliente";
-    // TEMP: Send to admin email (litustasteapp@gmail.com) since Resend free tier
-    // only allows sending to the verified email. Update once a domain is verified.
-    const adminEmail = process.env.ADMIN_EMAIL || "kayfas12@gmail.com";
+    const customerEmail = orderWithCustomer?.customerEmail;
 
-    try {
-      if (status === "recibido") {
-        await sendOrderReceivedEmail(adminEmail, customerName, id);
-        console.log(`✅ Recibido email sent to admin (${adminEmail}) for order ${id}`);
-      } else if (status === "completed") {
-        await sendOrderCompletedEmail(adminEmail, customerName, id);
-        console.log(`✅ Completed email sent to admin (${adminEmail}) for order ${id}`);
+    // Send email notifications directly to the customer.
+    // Until a custom domain is verified in Resend, emails will only deliver
+    // to the admin's verified address (ADMIN_EMAIL).
+    if (customerEmail) {
+      try {
+        if (status === "recibido") {
+          await sendOrderReceivedEmail(customerEmail, customerName, id);
+          console.warn(`✅ Recibido email sent to ${customerEmail} for order ${id}`);
+        } else if (status === "completed") {
+          await sendOrderCompletedEmail(customerEmail, customerName, id);
+          console.warn(`✅ Completed email sent to ${customerEmail} for order ${id}`);
+        }
+      } catch (e) {
+        console.error("Failed to send notification email:", e);
       }
-    } catch (e) {
-      console.error("Failed to send notification email:", e);
     }
 
     return NextResponse.json(updated);

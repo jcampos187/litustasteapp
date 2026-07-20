@@ -1,4 +1,5 @@
 import nextConfig from "eslint-config-next";
+import tseslint from "typescript-eslint";
 
 const config = [
   // Spread the Next.js recommended flat config
@@ -6,6 +7,10 @@ const config = [
 
   // Project-specific overrides
   {
+    // Explicitly declare the @typescript-eslint plugin so rules work in flat config
+    plugins: {
+      "@typescript-eslint": tseslint.plugin,
+    },
     rules: {
       // Allow img elements (we use them intentionally for simple images)
       "@next/next/no-img-element": "off",

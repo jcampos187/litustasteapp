@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { weeklyMenus, users, businessSettings } from "@/db/schema";
+import { weeklyMenus, users } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { sendMenuNotification } from "@/lib/email";
 

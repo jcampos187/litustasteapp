@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { users, orders, orderItems } from "@/db/schema";
-import { eq, desc, sql } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
 import { Plus, Users, Mail } from "lucide-react";
 import { formatCRC } from "@/lib/utils";

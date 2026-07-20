@@ -8,8 +8,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-3">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+          <img
                 src="/logo.png"
                 alt="Litus Taste"
                 className="h-10 w-10 rounded-xl object-contain"

@@ -1,6 +1,6 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { db } from "@/db";
-import { orders, orderItems, users, weeklyMenus, orderStatusEnum } from "@/db/schema";
+import { orders, orderItems, users, weeklyMenus } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { formatCRC, getOrderStatusLabel } from "@/lib/utils";
 import OrderStatusManager from "./OrderStatusManager";

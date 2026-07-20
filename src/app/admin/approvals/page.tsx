@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
-import { UserCheck, UserX } from "lucide-react";
+import { UserCheck } from "lucide-react";
 import ApproveUserButton from "./ApproveUserButton";
 
 export default async function AdminApprovalsPage() {

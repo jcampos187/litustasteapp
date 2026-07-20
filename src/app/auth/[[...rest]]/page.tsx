@@ -1,6 +1,7 @@
 import { SignIn } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function AuthPage() {
   const { userId } = await auth();
@@ -20,9 +21,9 @@ export default async function AuthPage() {
           </p>
           <p className="mt-2 text-sm text-lt-charcoal/40">
             ¿No tienes cuenta?{" "}
-            <a href="/auth/sign-up" className="font-medium text-lt-terracotta hover:underline">
+            <Link href="/auth/sign-up" className="font-medium text-lt-terracotta hover:underline">
               Regístrate aquí
-            </a>
+            </Link>
           </p>
         </div>
 

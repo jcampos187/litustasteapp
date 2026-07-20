@@ -1,7 +1,6 @@
 import { db } from "@/db";
 import { meals, weeklyMenus, weeklyMenuItems, dietaryTags } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
-import { formatCRC } from "@/lib/utils";
 import MenuClient from "./MenuClient";
 
 async function getMenuData() {
