@@ -56,41 +56,41 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
-      testIgnore: ["**/admin-authenticated.spec.ts", "**/global.setup.ts"],
+      testIgnore: ["**/admin-authenticated.spec.ts", "**/order-flow-authenticated.spec.ts", "**/global.setup.ts"],
     },
 
     {
       name: "firefox",
       use: { ...devices["Desktop Firefox"] },
-      testIgnore: ["**/admin-authenticated.spec.ts", "**/global.setup.ts"],
+      testIgnore: ["**/admin-authenticated.spec.ts", "**/order-flow-authenticated.spec.ts", "**/global.setup.ts"],
     },
 
     {
       name: "webkit",
       use: { ...devices["Desktop Safari"] },
-      testIgnore: ["**/admin-authenticated.spec.ts", "**/global.setup.ts"],
+      testIgnore: ["**/admin-authenticated.spec.ts", "**/order-flow-authenticated.spec.ts", "**/global.setup.ts"],
     },
 
     /* Test against mobile viewports. */
     {
       name: "Mobile Chrome",
       use: { ...devices["Pixel 5"] },
-      testIgnore: ["**/admin-authenticated.spec.ts", "**/global.setup.ts"],
+      testIgnore: ["**/admin-authenticated.spec.ts", "**/order-flow-authenticated.spec.ts", "**/global.setup.ts"],
     },
     {
       name: "Mobile Safari",
       use: { ...devices["iPhone 14"] },
-      testIgnore: ["**/admin-authenticated.spec.ts", "**/global.setup.ts"],
+      testIgnore: ["**/admin-authenticated.spec.ts", "**/order-flow-authenticated.spec.ts", "**/global.setup.ts"],
     },
 
-    // ─── Authenticated admin tests (logged-in session) ──────────
+    // ─── Authenticated tests (logged-in session) ──────────
     {
       name: "admin-authenticated",
       use: {
         ...devices["Desktop Chrome"],
         storageState: authFile,
       },
-      testMatch: /admin-authenticated\.spec\.ts/,
+      testMatch: /(admin-authenticated|order-flow-authenticated)\.spec\.ts/,
       dependencies: ["global-setup"],
     },
   ],
