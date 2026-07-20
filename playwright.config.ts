@@ -1,10 +1,13 @@
 import { defineConfig, devices } from "@playwright/test";
+import path from "path";
 
 /**
  * Read environment variables from .env.local if available.
  * See https://github.com/motdotla/dotenv
  */
 // require('dotenv').config();
+
+const authFile = path.join(__dirname, "playwright/.clerk/admin.json");
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -43,29 +46,52 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+    // ─── Global setup (runs first, before all projects) ─────────
+    {
+      name: "global-setup",
+      testMatch: /global\.setup\.ts/,
+    },
+
+    // ─── Guest / public page tests (no auth needed) ──────────────
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      testIgnore: ["**/admin-authenticated.spec.ts", "**/global.setup.ts"],
     },
 
     {
       name: "firefox",
       use: { ...devices["Desktop Firefox"] },
+      testIgnore: ["**/admin-authenticated.spec.ts", "**/global.setup.ts"],
     },
 
     {
       name: "webkit",
       use: { ...devices["Desktop Safari"] },
+      testIgnore: ["**/admin-authenticated.spec.ts", "**/global.setup.ts"],
     },
 
     /* Test against mobile viewports. */
     {
       name: "Mobile Chrome",
       use: { ...devices["Pixel 5"] },
+      testIgnore: ["**/admin-authenticated.spec.ts", "**/global.setup.ts"],
     },
     {
       name: "Mobile Safari",
       use: { ...devices["iPhone 14"] },
+      testIgnore: ["**/admin-authenticated.spec.ts", "**/global.setup.ts"],
+    },
+
+    // ─── Authenticated admin tests (logged-in session) ──────────
+    {
+      name: "admin-authenticated",
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: authFile,
+      },
+      testMatch: /admin-authenticated\.spec\.ts/,
+      dependencies: ["global-setup"],
     },
   ],
 
