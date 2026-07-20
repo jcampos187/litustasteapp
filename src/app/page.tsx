@@ -5,6 +5,8 @@ import { db } from "@/db";
 import { meals, weeklyMenus, weeklyMenuItems, dietaryTags } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import ScrollReveal from "@/components/ScrollReveal";
+import MenuPreviewList from "@/components/MenuPreviewList";
+import CartSummary from "@/components/CartSummary";
 
 async function getActiveMenu() {
   try {
@@ -288,72 +290,10 @@ export default async function Home() {
             </div>
           </ScrollReveal>
 
-          <div className="mt-12 divide-y divide-lt-card-border border-t border-lt-card-border">
-            {activeMenu?.items.slice(0, 6).map((item, i) => (
-              <ScrollReveal key={item.id} variant="fade-up" delay={i * 80 + 200} duration={500}>
-                <div className="flex items-center gap-4 py-4 sm:gap-6 sm:py-5">
-                  {/* Small thumbnail */}
-                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-lt-green/10 to-lt-terracotta/10 sm:h-20 sm:w-20">
-                    {item.imageUrl ? (
-                      <Image
-                        src={item.imageUrl}
-                        alt={item.name}
-                        fill
-                        className="object-cover"
-                        sizes="80px"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <span className="text-xl opacity-40">🍽️</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Info */}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-3">
-                      <h3 className="truncate text-base font-bold text-lt-warm-brown sm:text-lg">
-                        {item.name}
-                      </h3>
-                      <span className="shrink-0 text-base font-bold text-lt-terracotta sm:text-lg">
-                        ₡{parseInt(item.price).toLocaleString()}
-                      </span>
-                    </div>
-                    <p className="mt-0.5 line-clamp-1 text-sm text-lt-charcoal/50 sm:mt-1">
-                      {item.description}
-                    </p>
-                    <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                      {item.calories && (
-                        <span className="text-[11px] text-lt-charcoal/40">
-                          🔥 {item.calories} cal
-                        </span>
-                      )}
-                      {item.proteinG && (
-                        <span className="text-[11px] text-lt-charcoal/40">
-                          💪 {item.proteinG}g prot.
-                        </span>
-                      )}
-                      {item.dietaryTags &&
-                        item.dietaryTags
-                          .split(",")
-                          .slice(0, 3)
-                          .map((slug) => {
-                            const tag = activeMenu?.tags.find((t) => t.slug === slug.trim());
-                            return (
-                              <span
-                                key={slug}
-                                className="inline-flex items-center gap-0.5 rounded-full bg-lt-green/8 px-2 py-0.5 text-[10px] font-medium text-lt-olive-dark"
-                              >
-                                {tag?.emoji && <span>{tag.emoji}</span>}
-                                {tag?.name || slug}
-                              </span>
-                            );
-                          })}
-                    </div>
-                  </div>
-                </div>
-              </ScrollReveal>
-            ))}
+          <ScrollReveal variant="fade-up" delay={200}>
+            {activeMenu && (
+              <MenuPreviewList items={activeMenu.items.slice(0, 6)} tags={activeMenu.tags} />
+            )}
             {!activeMenu && (
               <div className="py-20 text-center">
                 <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-2xl bg-lt-green/5">
@@ -375,7 +315,7 @@ export default async function Home() {
                 )}
               </div>
             )}
-          </div>
+          </ScrollReveal>
         </div>
       </ScrollReveal>
 
@@ -480,6 +420,9 @@ export default async function Home() {
           </ScrollReveal>
         </div>
       </ScrollReveal>
+
+      {/* Floating cart summary */}
+      <CartSummary />
     </>
   );
 }

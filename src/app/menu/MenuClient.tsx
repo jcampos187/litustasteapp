@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Image from "next/image";
-import { Search, SlidersHorizontal, Plus } from "lucide-react";
+import { Search, SlidersHorizontal, Plus, Minus, Trash2 } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
 import { formatCRC } from "@/lib/utils";
 
@@ -45,7 +45,7 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
   const [search, setSearch] = useState("");
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
-  const { addItem, items: cartItems } = useCart();
+  const { addItem, updateQuantity, removeItem, items: cartItems } = useCart();
 
   const toggleTag = (slug: string) => {
     setActiveTags((prev) =>
@@ -268,23 +268,58 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
                 </div>
               </div>
 
-              {/* Add to cart button */}
+              {/* Quantity controls */}
               <div className="shrink-0 self-center">
-                <button
-                  onClick={() =>
-                    addItem({
-                      mealId: item.id,
-                      mealName: item.name,
-                      price: parseFloat(item.price),
-                      imageUrl: item.imageUrl,
-                      portionSize: item.portionSize || undefined,
-                    })
-                  }
-                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-lt-terracotta text-white shadow-sm shadow-lt-terracotta/20 transition-all hover:bg-lt-terracotta-dark hover:shadow-md hover:shadow-lt-terracotta/30 active:scale-90 sm:h-10 sm:w-10"
-                  aria-label="Agregar al carrito"
-                >
-                  <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
-                </button>
+                {cartItem ? (
+                  <div className="flex items-center gap-1 sm:gap-1.5">
+                    <button
+                      onClick={() => {
+                        if (cartItem.quantity <= 1) {
+                          removeItem(item.id);
+                        } else {
+                          updateQuantity(item.id, cartItem.quantity - 1);
+                        }
+                      }}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-lt-card-border text-lt-charcoal/50 transition-all hover:border-lt-terracotta/40 hover:text-lt-terracotta sm:h-9 sm:w-9"
+                      aria-label="Disminuir cantidad"
+                    >
+                      <Minus className="h-3.5 w-3.5" />
+                    </button>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-lt-green/10 text-sm font-bold text-lt-green sm:h-9 sm:w-9">
+                      {cartItem.quantity}
+                    </span>
+                    <button
+                      onClick={() => updateQuantity(item.id, cartItem.quantity + 1)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-lt-card-border text-lt-charcoal/50 transition-all hover:border-lt-terracotta/40 hover:text-lt-terracotta sm:h-9 sm:w-9"
+                      aria-label="Aumentar cantidad"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => removeItem(item.id)}
+                      className="ml-1 flex h-8 w-8 items-center justify-center rounded-lg text-lt-charcoal/30 transition-all hover:bg-red-50 hover:text-red-400 sm:h-9 sm:w-9"
+                      aria-label="Eliminar del carrito"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() =>
+                      addItem({
+                        mealId: item.id,
+                        mealName: item.name,
+                        price: parseFloat(item.price),
+                        imageUrl: item.imageUrl,
+                        portionSize: item.portionSize || undefined,
+                      })
+                    }
+                    className="flex h-9 w-9 items-center justify-center rounded-xl bg-lt-terracotta text-white shadow-sm shadow-lt-terracotta/20 transition-all hover:bg-lt-terracotta-dark hover:shadow-md hover:shadow-lt-terracotta/30 active:scale-90 sm:h-10 sm:w-10"
+                    aria-label="Agregar al carrito"
+                  >
+                    <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </button>
+                )}
               </div>
             </div>
           );
