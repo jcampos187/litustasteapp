@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Plus, Pencil, UtensilsCrossed } from "lucide-react";
 import DietaryTagBadge from "@/components/DietaryTagBadge";
 import DeleteMealButton from "@/components/DeleteMealButton";
+import BulkImportButton from "@/components/BulkImportButton";
 
 export default async function AdminMenuPage() {
   const allMeals = await db
@@ -16,8 +17,7 @@ export default async function AdminMenuPage() {
   const tags = await db.select().from(dietaryTags);
 
   return (
-    <div>
-      <div className="flex items-center justify-between">
+    <div>      <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-lt-warm-brown">
             Platillos
@@ -26,13 +26,16 @@ export default async function AdminMenuPage() {
             Gestiona tu catálogo de platillos
           </p>
         </div>
-        <Link
-          href="/admin/menu/new"
-          className="flex items-center gap-2 rounded-xl bg-lt-terracotta px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-lt-terracotta-dark"
-        >
-          <Plus className="h-4 w-4" />
-          Nuevo Platillo
-        </Link>
+        <div className="flex items-center gap-3">
+          <BulkImportButton />
+          <Link
+            href="/admin/menu/new"
+            className="flex items-center gap-2 rounded-xl bg-lt-terracotta px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-lt-terracotta-dark"
+          >
+            <Plus className="h-4 w-4" />
+            Nuevo Platillo
+          </Link>
+        </div>
       </div>
 
       {allMeals.length === 0 ? (
