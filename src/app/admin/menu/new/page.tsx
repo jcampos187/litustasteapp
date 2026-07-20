@@ -10,13 +10,7 @@ export default function NewMealPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    description: "",
     price: "",
-    portionSize: "",
-    calories: "",
-    proteinG: "",
-    carbsG: "",
-    fatG: "",
     dietaryTags: [] as string[],
   });
 
@@ -49,12 +43,10 @@ export default function NewMealPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...formData,
+          name: formData.name,
+          description: "",
           price: parseFloat(formData.price),
-          calories: formData.calories ? parseInt(formData.calories) : null,
-          proteinG: formData.proteinG ? parseInt(formData.proteinG) : null,
-          carbsG: formData.carbsG ? parseInt(formData.carbsG) : null,
-          fatG: formData.fatG ? parseInt(formData.fatG) : null,
+          dietaryTags: formData.dietaryTags.length > 0 ? formData.dietaryTags : undefined,
         }),
       });
 
@@ -86,7 +78,7 @@ export default function NewMealPage() {
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-8 max-w-2xl">
-        {/* Basic Info */}
+        {/* Name & Price */}
         <div className="rounded-2xl border border-lt-cream-dark bg-white p-6 space-y-5">
           <h2 className="font-semibold text-lt-warm-brown">Información Básica</h2>
 
@@ -106,102 +98,23 @@ export default function NewMealPage() {
 
           <div>
             <label className="block text-sm font-medium text-lt-charcoal/70">
-              Descripción
+              Precio (₡) *
             </label>
-            <textarea
-              rows={3}
-              value={formData.description}
-              onChange={(e) => setFormData((p) => ({ ...p, description: e.target.value }))}
+            <input
+              type="number"
+              required
+              min="0"
+              value={formData.price}
+              onChange={(e) => setFormData((p) => ({ ...p, price: e.target.value }))}
               className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
-              placeholder="Describe los ingredientes y el sabor..."
+              placeholder="₡ 5000"
             />
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-3">
-            <div>
-              <label className="block text-sm font-medium text-lt-charcoal/70">
-                Precio (₡) *
-              </label>
-              <input
-                type="number"
-                required
-                min="0"
-                value={formData.price}
-                onChange={(e) => setFormData((p) => ({ ...p, price: e.target.value }))}
-                className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
-                placeholder="₡ 5000"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-lt-charcoal/70">
-                Porción
-              </label>
-              <input
-                type="text"
-                value={formData.portionSize}
-                onChange={(e) => setFormData((p) => ({ ...p, portionSize: e.target.value }))}
-                className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
-                placeholder="Ej: 400g, 1 porción"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-lt-charcoal/70">
-                Calorías
-              </label>
-              <input
-                type="number"
-                value={formData.calories}
-                onChange={(e) => setFormData((p) => ({ ...p, calories: e.target.value }))}
-                className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
-                placeholder="Ej: 450"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Macros */}
-        <div className="rounded-2xl border border-lt-cream-dark bg-white p-6 space-y-5">
-          <h2 className="font-semibold text-lt-warm-brown">Macros (opcional)</h2>
-          <div className="grid gap-5 sm:grid-cols-3">
-            <div>
-              <label className="block text-sm font-medium text-lt-charcoal/70">
-                Proteína (g)
-              </label>
-              <input
-                type="number"
-                value={formData.proteinG}
-                onChange={(e) => setFormData((p) => ({ ...p, proteinG: e.target.value }))}
-                className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-lt-charcoal/70">
-                Carbohidratos (g)
-              </label>
-              <input
-                type="number"
-                value={formData.carbsG}
-                onChange={(e) => setFormData((p) => ({ ...p, carbsG: e.target.value }))}
-                className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-lt-charcoal/70">
-                Grasa (g)
-              </label>
-              <input
-                type="number"
-                value={formData.fatG}
-                onChange={(e) => setFormData((p) => ({ ...p, fatG: e.target.value }))}
-                className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
-              />
-            </div>
           </div>
         </div>
 
         {/* Dietary Tags */}
         <div className="rounded-2xl border border-lt-cream-dark bg-white p-6">
-          <h2 className="font-semibold text-lt-warm-brown">Etiquetas Dietéticas</h2>
+          <h2 className="font-semibold text-lt-warm-brown">Etiquetas (opcional)</h2>
           <p className="mt-1 text-sm text-lt-charcoal/50">
             Selecciona las etiquetas que aplican a este platillo
           </p>
