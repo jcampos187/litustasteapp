@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { Plus, Minus, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { Plus, Minus, Trash2, LogIn } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
 import { useCart } from "./CartProvider";
 
 interface PreviewItem {
@@ -29,6 +31,7 @@ interface MenuPreviewListProps {
 }
 
 export default function MenuPreviewList({ items, tags }: MenuPreviewListProps) {
+  const { isSignedIn } = useAuth();
   const { addItem, updateQuantity, removeItem, items: cartItems } = useCart();
 
   return (
@@ -97,9 +100,17 @@ export default function MenuPreviewList({ items, tags }: MenuPreviewListProps) {
               </div>
             </div>
 
-            {/* Quantity controls */}
+            {/* Quantity controls — only for logged-in users */}
             <div className="shrink-0 self-center">
-              {cartItem ? (
+              {!isSignedIn ? (
+                <Link
+                  href="/auth/sign-in"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-lt-card-border text-lt-charcoal/40 transition-all hover:border-lt-terracotta/40 hover:text-lt-terracotta sm:h-10 sm:w-10"
+                  aria-label="Iniciar sesión para ordenar"
+                >
+                  <LogIn className="h-4 w-4 sm:h-5 sm:w-5" />
+                </Link>
+              ) : cartItem ? (
                 <div className="flex items-center gap-1 sm:gap-1.5">
                   <button
                     onClick={() => {

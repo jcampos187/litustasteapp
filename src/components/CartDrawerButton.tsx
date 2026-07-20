@@ -1,13 +1,17 @@
 "use client";
 
 import { ShoppingBag } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
 import { useCart } from "./CartProvider";
 import CartDrawer from "./CartDrawer";
 import { useState } from "react";
 
 export default function CartDrawerButton() {
+  const { isSignedIn } = useAuth();
   const { totalItems } = useCart();
   const [isOpen, setIsOpen] = useState(false);
+
+  if (!isSignedIn) return null;
 
   return (
     <>

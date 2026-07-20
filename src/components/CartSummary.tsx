@@ -1,14 +1,16 @@
 "use client";
 
 import { ShoppingBag } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
 import { useCart } from "./CartProvider";
 import { formatCRC } from "@/lib/utils";
 import Link from "next/link";
 
 export default function CartSummary() {
+  const { isSignedIn } = useAuth();
   const { totalItems, totalPrice } = useCart();
 
-  if (totalItems === 0) return null;
+  if (!isSignedIn || totalItems === 0) return null;
 
   return (
     <Link

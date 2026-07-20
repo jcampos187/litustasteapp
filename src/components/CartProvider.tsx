@@ -53,18 +53,16 @@ function getInitialCart(): CartItem[] {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const { userId } = useAuth();
-  const [items, setItems] = useState<CartItem[]>(getInitialCart);
+  const { userId, isSignedIn } = useAuth();
+  const [items, setItems] = useState<CartItem[]>(isSignedIn ? getInitialCart : []);
   const prevUserId = useRef(userId);
 
-  // Detect auth changes: clear cart on logout or user switch
-  // NOT on initial hydration (undefined → real userId)
+  // Clear cart on logout: user was signed in → now not
   useEffect(() => {
     const prev = prevUserId.current;
     if (prev !== userId) {
-      // Clear only on logout (user was signed in → now not)
-      // or on user switch (both are real but different)
-      if (prev && (!userId || prev !== userId)) {
+      // If user just logged out, clear everything
+      if (prev && !userId) {
         setItems([]);
         localStorage.removeItem(CART_STORAGE_KEY);
       }
