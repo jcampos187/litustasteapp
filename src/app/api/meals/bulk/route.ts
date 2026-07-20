@@ -3,10 +3,21 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { meals, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { createMealSchema } from "@/lib/validations";
 import { z } from "zod";
 
-const bulkMealSchema = z.array(createMealSchema).min(1, "Debes incluir al menos un platillo").max(100, "Máximo 100 platillos por lote");
+const bulkMealItemSchema = z.object({
+  name: z.string().min(1, "El nombre es obligatorio"),
+  description: z.string().optional().default(""),
+  price: z.number().positive("El precio debe ser positivo"),
+  portionSize: z.string().optional().nullable(),
+  calories: z.number().int().positive().optional().nullable(),
+  proteinG: z.number().int().positive().optional().nullable(),
+  carbsG: z.number().int().positive().optional().nullable(),
+  fatG: z.number().int().positive().optional().nullable(),
+  dietaryTags: z.array(z.string()).optional(),
+});
+
+const bulkMealSchema = z.array(bulkMealItemSchema).min(1, "Debes incluir al menos un platillo").max(100, "Máximo 100 platillos por lote");
 
 export async function POST(request: Request) {
   const { userId } = await auth();

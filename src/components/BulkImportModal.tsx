@@ -22,12 +22,12 @@ interface BulkImportModalProps {
   onSuccess: () => void;
 }
 
-const EXAMPLE_CSV = `name,description,price,calories,protein,carbs,fat,portion,tags
-Pollo Teriyaki,Arroz con vegetales y pollo glaseado,3500,500,30,45,12,400g,high-protein
-Bowl de Quinoa,Quinoa con vegetales asados,4200,450,15,52,18,,vegan,gluten-free`;
+const EXAMPLE_CSV = `name,price,tags
+Pollo Teriyaki,3500,high-protein
+Bowl de Quinoa,4200,vegan`;
 
-const TEMPLATE_CSV = `name,description,price,calories,protein,carbs,fat,portion,tags
-Escribe aquí el nombre,"Escribe aquí la descripción (puede incluir comas)",3500,500,30,45,12,400g,etiqueta-1`;
+const TEMPLATE_CSV = `name,price,tags
+Escribe aquí el nombre,3500,etiqueta-1`;
 
 function parseCSVLine(line: string): string[] {
   const result: string[] = [];
@@ -76,13 +76,7 @@ export default function BulkImportModal({ onClose, onSuccess }: BulkImportModalP
 
     // Find column indices
     const nameIdx = headers.findIndex((h) => h === "name");
-    const descIdx = headers.findIndex((h) => h === "description");
     const priceIdx = headers.findIndex((h) => h === "price");
-    const calIdx = headers.findIndex((h) => h === "calories");
-    const protIdx = headers.findIndex((h) => h === "protein");
-    const carbsIdx = headers.findIndex((h) => h === "carbs");
-    const fatIdx = headers.findIndex((h) => h === "fat");
-    const portionIdx = headers.findIndex((h) => h === "portion");
     const tagsIdx = headers.findIndex((h) => h === "tags");
 
     if (nameIdx === -1 || priceIdx === -1) {
@@ -103,38 +97,28 @@ export default function BulkImportModal({ onClose, onSuccess }: BulkImportModalP
       const name = cols[nameIdx] || "";
       const priceRaw = cols[priceIdx]?.replace(/[₡$,]/g, "") || "";
       const price = parseFloat(priceRaw);
-      const description = descIdx >= 0 ? cols[descIdx] || "" : "";
-      const calories = calIdx >= 0 && cols[calIdx] ? parseInt(cols[calIdx]) || null : null;
-      const proteinG = protIdx >= 0 && cols[protIdx] ? parseInt(cols[protIdx]) || null : null;
-      const carbsG = carbsIdx >= 0 && cols[carbsIdx] ? parseInt(cols[carbsIdx]) || null : null;
-      const fatG = fatIdx >= 0 && cols[fatIdx] ? parseInt(cols[fatIdx]) || null : null;
-      const portionSize = portionIdx >= 0 && cols[portionIdx] ? cols[portionIdx] || null : null;
 
-      // Parse tags (multiple comma-separated in one column, or remaining columns)
+      // Parse tags (comma-separated in the tags column)
       let tags: string[] = [];
-      if (tagsIdx >= 0) {
-        tags = cols[tagsIdx]
-          ? cols[tagsIdx].split(",").map((t) => t.trim()).filter(Boolean)
-          : [];
+      if (tagsIdx >= 0 && cols[tagsIdx]) {
+        tags = cols[tagsIdx].split(",").map((t) => t.trim()).filter(Boolean);
       }
 
       // Validate
       if (!name) errors.push("Nombre requerido");
       if (name.length > 100) errors.push("Nombre muy largo (>100)");
-      if (!description) errors.push("Descripción requerida");
-      else if (description.length > 500) errors.push("Descripción muy larga (>500)");
       if (isNaN(price) || price <= 0) errors.push("Precio inválido");
 
       meals.push({
         row,
         name,
-        description,
+        description: "",  // not required in bulk import
         price: isNaN(price) ? 0 : price,
-        calories,
-        proteinG,
-        carbsG,
-        fatG,
-        portionSize,
+        calories: null,
+        proteinG: null,
+        carbsG: null,
+        fatG: null,
+        portionSize: null,
         dietaryTags: tags,
         errors,
       });
@@ -245,8 +229,8 @@ export default function BulkImportModal({ onClose, onSuccess }: BulkImportModalP
                     Formato esperado
                   </p>
                   <p className="mt-1 text-xs text-lt-charcoal/60">
-                    Copia desde tu hoja de cálculo o escribe en formato CSV. Las columnas requeridas son{" "}
-                    <strong>name</strong> y <strong>price</strong>.
+                    Copia desde tu hoja de cálculo o escribe en formato CSV. Solo necesitas las columnas{" "}
+                    <strong>name</strong>, <strong>price</strong> y opcionalmente <strong>tags</strong>.
                   </p>
                   <pre className="mt-3 overflow-x-auto rounded-lg bg-white/80 p-3 text-[11px] leading-relaxed text-lt-charcoal/70">
                     {EXAMPLE_CSV}
@@ -269,7 +253,7 @@ export default function BulkImportModal({ onClose, onSuccess }: BulkImportModalP
                     onChange={(e) => setRawText(e.target.value)}
                     rows={10}
                     className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white p-4 font-mono text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
-                    placeholder={`Pega aquí los datos copiados de tu hoja de cálculo...\n\nEjemplo:\nname,description,price,calories,protein,carbs,fat,portion,tags\nPollo Teriyaki,Arroz con vegetales y pollo,3500,500,30,45,12,400g,high-protein`}
+                    placeholder={`Pega aquí los datos copiados de tu hoja de cálculo...\n\nEjemplo:\nname,price,tags\nPollo Teriyaki,3500,high-protein\nBowl de Quinoa,4200`}
                   />
                 </div>
 
