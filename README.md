@@ -1,5 +1,7 @@
 # Litus Taste — Comida Preparada
 
+[![CI](https://github.com/jcampos187/litustasteapp/actions/workflows/playwright.yml/badge.svg)](https://github.com/jcampos187/litustasteapp/actions)
+
 Plataforma web para una empresa de comida preparada (meal prep). Los clientes
 invitados pueden ver el menú semanal, hacer pedidos, y el administrador recibe
 notificaciones por correo.
