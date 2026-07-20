@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, AlertCircle, CheckCircle, Upload, FileText } from "lucide-react";
+import { X, AlertCircle, CheckCircle, Upload, FileText, Download } from "lucide-react";
 
 interface ParsedMeal {
   row: number;
@@ -25,6 +25,9 @@ interface BulkImportModalProps {
 const EXAMPLE_CSV = `name,description,price,calories,protein,carbs,fat,portion,tags
 Pollo Teriyaki,Arroz con vegetales y pollo glaseado,3500,500,30,45,12,400g,high-protein
 Bowl de Quinoa,Quinoa con vegetales asados,4200,450,15,52,18,,vegan,gluten-free`;
+
+const TEMPLATE_CSV = `name,description,price,calories,protein,carbs,fat,portion,tags
+Escribe aquí el nombre,"Escribe aquí la descripción (puede incluir comas)",3500,500,30,45,12,400g,etiqueta-1`;
 
 function parseCSVLine(line: string): string[] {
   const result: string[] = [];
@@ -189,6 +192,18 @@ export default function BulkImportModal({ onClose, onSuccess }: BulkImportModalP
     }
   };
 
+  const handleDownloadTemplate = () => {
+    const blob = new Blob([TEMPLATE_CSV], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "plantilla-platillos.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const hasData = parsedMeals.length > 0;
 
   return (
@@ -236,6 +251,13 @@ export default function BulkImportModal({ onClose, onSuccess }: BulkImportModalP
                   <pre className="mt-3 overflow-x-auto rounded-lg bg-white/80 p-3 text-[11px] leading-relaxed text-lt-charcoal/70">
                     {EXAMPLE_CSV}
                   </pre>
+                  <button
+                    onClick={handleDownloadTemplate}
+                    className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-lt-green/20 bg-white/60 px-3 py-1.5 text-[11px] font-medium text-lt-olive-dark transition-all hover:bg-white hover:shadow-sm"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    Descargar plantilla CSV
+                  </button>
                 </div>
 
                 <div>
