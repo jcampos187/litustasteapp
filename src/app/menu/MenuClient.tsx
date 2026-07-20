@@ -293,7 +293,7 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
                     <button
                       onClick={() => {
                         if (cartItem.quantity <= 1) {
-                          removeItem(item.id);
+                          setRemoveConfirmTarget(item.id);
                         } else {
                           updateQuantity(item.id, cartItem.quantity - 1);
                         }

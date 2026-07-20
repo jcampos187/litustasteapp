@@ -22,6 +22,7 @@ export default function CartPage() {
   const [isApproved, setIsApproved] = useState(true);
   const [showConfirm, setShowConfirm] = useState(false);
   const [removeConfirmTarget, setRemoveConfirmTarget] = useState<string | null>(null);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   // Redirect guests to sign-in
   useEffect(() => {
@@ -113,6 +114,15 @@ export default function CartPage() {
     setRemoveConfirmTarget(mealId);
   };
 
+  const handleDecrement = (mealId: string, currentQty: number) => {
+    if (currentQty <= 1) {
+      // Show confirmation before removing at qty=1
+      setRemoveConfirmTarget(mealId);
+    } else {
+      updateQuantity(mealId, currentQty - 1);
+    }
+  };
+
   if (items.length === 0) {
     return (
       <div className="mx-auto max-w-3xl px-6 py-20 text-center">
@@ -146,12 +156,20 @@ export default function CartPage() {
             Revisa tu pedido antes de enviarlo
           </p>
         </div>
-        <Link
-          href="/menu"
-          className="text-sm font-medium text-lt-terracotta hover:text-lt-terracotta-dark"
-        >
-          + Seguir agregando
-        </Link>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShowClearConfirm(true)}
+            className="text-sm font-medium text-lt-charcoal/50 transition-colors hover:text-red-500"
+          >
+            Vaciar carrito
+          </button>
+          <Link
+            href="/menu"
+            className="text-sm font-medium text-lt-terracotta hover:text-lt-terracotta-dark"
+          >
+            + Seguir agregando
+          </Link>
+        </div>
       </div>
 
       {/* Profile incomplete banner */}
@@ -210,7 +228,7 @@ export default function CartPage() {
             {/* Quantity */}
             <div className="flex items-center gap-2">
               <button
-                onClick={() => updateQuantity(item.mealId, item.quantity - 1)}
+                onClick={() => handleDecrement(item.mealId, item.quantity)}
                 className="lt-qty-btn"
               >
                 <Minus className="h-3.5 w-3.5" />
@@ -322,6 +340,21 @@ export default function CartPage() {
         title="Eliminar Artículo"
         message="¿Estás seguro de eliminar este artículo de tu carrito?"
         confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+        variant="danger"
+      />
+
+      {/* ── Confirmación de vaciar carrito ── */}
+      <ConfirmModal
+        isOpen={showClearConfirm}
+        onClose={() => setShowClearConfirm(false)}
+        onConfirm={() => {
+          clearCart();
+          setShowClearConfirm(false);
+        }}
+        title="Vaciar Carrito"
+        message="¿Estás seguro de vaciar todo el carrito? Se eliminarán todos los artículos."
+        confirmLabel="Sí, vaciar carrito"
         cancelLabel="Cancelar"
         variant="danger"
       />

@@ -82,7 +82,13 @@ export default function CartDrawer({ onClose }: CartDrawerProps) {
                   {/* Quantity controls */}
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => updateQuantity(item.mealId, item.quantity - 1)}
+                      onClick={() => {
+                        if (item.quantity <= 1) {
+                          setRemoveConfirmTarget(item.mealId);
+                        } else {
+                          updateQuantity(item.mealId, item.quantity - 1);
+                        }
+                      }}
                       className="lt-qty-btn"
                     >
                       <Minus className="h-3 w-3" />

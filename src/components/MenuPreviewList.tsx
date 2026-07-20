@@ -119,18 +119,17 @@ export default function MenuPreviewList({ items, tags }: MenuPreviewListProps) {
                   Inicia sesión
                 </Link>
               ) : cartItem ? (
-                <div className="flex items-center gap-1 sm:gap-1.5">
-                  <button
-                    onClick={() => {
-                      if (cartItem.quantity <= 1) {
-                        removeItem(item.id);
-                      } else {
-                        updateQuantity(item.id, cartItem.quantity - 1);
-                      }
-                    }}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-lt-card-border text-lt-charcoal/50 transition-all hover:border-lt-terracotta/40 hover:text-lt-terracotta sm:h-9 sm:w-9"
-                    aria-label="Disminuir cantidad"
-                  >
+                <div className="flex items-center gap-1 sm:gap-1.5">                    <button
+                      onClick={() => {
+                        if (cartItem.quantity <= 1) {
+                          setRemoveConfirmTarget(item.id);
+                        } else {
+                          updateQuantity(item.id, cartItem.quantity - 1);
+                        }
+                      }}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-lt-card-border text-lt-charcoal/50 transition-all hover:border-lt-terracotta/40 hover:text-lt-terracotta sm:h-9 sm:w-9"
+                      aria-label="Disminuir cantidad"
+                    >
                     <Minus className="h-3.5 w-3.5" />
                   </button>
                   <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-lt-green/10 text-sm font-bold text-lt-green sm:h-9 sm:w-9">
