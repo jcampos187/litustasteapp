@@ -231,9 +231,14 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
                       {formatCRC(item.price)}
                     </span>
                     {cartItem && (
-                      <span className="text-[10px] font-medium text-lt-olive-dark">
-                        {cartItem.quantity} en carrito
-                      </span>
+                      <>
+                        <span className="block text-xs font-semibold text-lt-warm-brown/60">
+                          Sub: {formatCRC(Number(item.price) * cartItem.quantity)}
+                        </span>
+                        <span className="text-[10px] font-medium text-lt-olive-dark">
+                          {cartItem.quantity} unid.
+                        </span>
+                      </>
                     )}
                   </div>
                 </div>

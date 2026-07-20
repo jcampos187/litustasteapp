@@ -71,6 +71,11 @@ export default function MenuPreviewList({ items, tags }: MenuPreviewListProps) {
                   ₡{parseInt(item.price).toLocaleString()}
                 </span>
               </div>
+              {cartItem && (
+                <span className="mt-0.5 block text-right text-[11px] font-semibold text-lt-warm-brown/60">
+                  Subtotal: ₡{(parseInt(item.price) * cartItem.quantity).toLocaleString()} ({cartItem.quantity} unid.)
+                </span>
+              )}
               <p className="mt-0.5 line-clamp-1 text-sm text-lt-charcoal/50 sm:mt-1">
                 {item.description}
               </p>

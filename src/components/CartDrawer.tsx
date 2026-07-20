@@ -64,7 +64,10 @@ export default function CartDrawer({ onClose }: CartDrawerProps) {
                       {item.mealName}
                     </p>
                     <p className="text-sm font-semibold text-lt-terracotta">
-                      {formatCRC(item.price)}
+                      {formatCRC(item.price)} c/u
+                    </p>
+                    <p className="text-xs font-semibold text-lt-warm-brown/70">
+                      Subtotal: {formatCRC(item.price * item.quantity)}
                     </p>
                     {item.portionSize && (
                       <p className="text-xs text-lt-charcoal/50">
