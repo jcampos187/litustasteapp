@@ -276,10 +276,10 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
                 {!isSignedIn ? (
                   <Link
                     href="/auth/sign-in"
-                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-lt-card-border text-lt-charcoal/40 transition-all hover:border-lt-terracotta/40 hover:text-lt-terracotta sm:h-10 sm:w-10"
-                    aria-label="Iniciar sesión para ordenar"
+                    className="inline-flex items-center gap-1.5 rounded-xl border-2 border-lt-terracotta/30 bg-lt-terracotta/5 px-3 py-2 text-[11px] font-semibold text-lt-terracotta transition-all hover:border-lt-terracotta hover:bg-lt-terracotta/10 hover:text-lt-terracotta-dark sm:px-4 sm:py-2.5 sm:text-xs"
                   >
-                    <LogIn className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <LogIn className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    Inicia sesión
                   </Link>
                 ) : cartItem ? (
                   <div className="flex items-center gap-1 sm:gap-1.5">
