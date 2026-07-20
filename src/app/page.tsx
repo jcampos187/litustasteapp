@@ -96,7 +96,7 @@ export default async function Home() {
             </div>
 
             {/* Main heading — serif display */}
-            <h1 className="animate-fade-in-up font-[family-name:var(--font-display)] text-5xl font-semibold leading-[1.08] tracking-tight text-lt-warm-brown sm:text-6xl md:text-7xl lg:text-8xl">
+            <h1 className="animate-fade-in-up font-[family-name:var(--font-display)] text-4xl font-semibold leading-[1.1] tracking-tight text-lt-warm-brown sm:text-5xl md:text-6xl lg:text-7xl">
               Tu comida de la
               <br />
               <span className="lt-gradient-text">semana, preparada</span>
@@ -192,7 +192,7 @@ export default async function Home() {
             <span className="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.15em] text-lt-olive">
               Cómo Funciona
             </span>
-            <h2 className="font-[family-name:var(--font-display)] text-4xl font-semibold leading-tight text-lt-warm-brown sm:text-5xl">
+            <h2 className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-lt-warm-brown sm:text-4xl">
               Comer bien nunca fue
               <br />
               <span className="lt-gradient-text">tan fácil</span>
@@ -265,7 +265,7 @@ export default async function Home() {
               <span className="mb-2 inline-block text-xs font-semibold uppercase tracking-[0.15em] text-lt-olive">
                 Menú Semanal
               </span>
-              <h2 className="font-[family-name:var(--font-display)] text-4xl font-semibold leading-tight text-lt-warm-brown sm:text-5xl">
+              <h2 className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-lt-warm-brown sm:text-4xl">
                 {activeMenu
                   ? "Selecciona tus favoritos"
                   : "Menú disponible pronto"}
@@ -331,7 +331,7 @@ export default async function Home() {
             👨‍🍳
           </span>
 
-          <h2 className="mt-6 font-[family-name:var(--font-display)] text-4xl font-semibold leading-tight text-lt-warm-brown sm:text-5xl">
+          <h2 className="mt-6 font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-lt-warm-brown sm:text-4xl">
             Hecho con ingredientes
             <br />
             <span className="lt-gradient-text">frescos y mucho amor</span>
@@ -373,7 +373,7 @@ export default async function Home() {
         <div className="pointer-events-none absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-lt-green/5 blur-[120px]" />
 
         <div className="relative mx-auto max-w-2xl text-center">
-          <h2 className="font-[family-name:var(--font-display)] text-4xl font-semibold leading-tight text-lt-warm-brown sm:text-5xl">
+          <h2 className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-tight text-lt-warm-brown sm:text-4xl">
             ¿Listo para comer rico
             <br />
             <span className="lt-gradient-text">esta semana?</span>
