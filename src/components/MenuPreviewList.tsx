@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { Plus, Minus, Trash2, LogIn } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { useCart } from "./CartProvider";
+import ConfirmModal from "./ConfirmModal";
 
 interface PreviewItem {
   id: string;
@@ -33,6 +35,7 @@ interface MenuPreviewListProps {
 export default function MenuPreviewList({ items, tags }: MenuPreviewListProps) {
   const { isSignedIn } = useAuth();
   const { addItem, updateQuantity, removeItem, items: cartItems } = useCart();
+  const [removeConfirmTarget, setRemoveConfirmTarget] = useState<string | null>(null);
 
   return (
     <div className="divide-y divide-lt-card-border border-t border-lt-card-border">
@@ -141,7 +144,7 @@ export default function MenuPreviewList({ items, tags }: MenuPreviewListProps) {
                     <Plus className="h-3.5 w-3.5" />
                   </button>
                   <button
-                    onClick={() => removeItem(item.id)}
+                    onClick={() => setRemoveConfirmTarget(item.id)}
                     className="ml-1 flex h-8 w-8 items-center justify-center rounded-lg text-lt-charcoal/30 transition-all hover:bg-red-50 hover:text-red-400 sm:h-9 sm:w-9"
                     aria-label="Eliminar del carrito"
                   >
@@ -169,6 +172,23 @@ export default function MenuPreviewList({ items, tags }: MenuPreviewListProps) {
           </div>
         );
       })}
+
+      {/* ── Confirmación de eliminar artículo ── */}
+      <ConfirmModal
+        isOpen={removeConfirmTarget !== null}
+        onClose={() => setRemoveConfirmTarget(null)}
+        onConfirm={() => {
+          if (removeConfirmTarget) {
+            removeItem(removeConfirmTarget);
+            setRemoveConfirmTarget(null);
+          }
+        }}
+        title="Eliminar del Carrito"
+        message="¿Estás seguro de eliminar este platillo de tu carrito?"
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+        variant="danger"
+      />
     </div>
   );
 }

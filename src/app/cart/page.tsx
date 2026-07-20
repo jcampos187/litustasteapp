@@ -3,6 +3,7 @@
 import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag, Clock } from "lucide-react";
 import { useCart } from "@/components/CartProvider";
 import { formatCRC } from "@/lib/utils";
+import ConfirmModal from "@/components/ConfirmModal";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -19,6 +20,8 @@ export default function CartPage() {
   const [profileComplete, setProfileComplete] = useState(true);
   const [profileChecked, setProfileChecked] = useState(false);
   const [isApproved, setIsApproved] = useState(true);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [removeConfirmTarget, setRemoveConfirmTarget] = useState<string | null>(null);
 
   // Redirect guests to sign-in
   useEffect(() => {
@@ -40,7 +43,7 @@ export default function CartPage() {
       .catch(() => setProfileChecked(true));
   }, [isSignedIn]);
 
-  const handleSubmit = async () => {
+  const handleConfirmOrder = async () => {
     if (!isSignedIn) {
       router.push("/auth/sign-in");
       return;
@@ -48,20 +51,9 @@ export default function CartPage() {
 
     if (items.length === 0) return;
 
-    // Check profile completion
-    if (!profileComplete) {
-      setError("Completa tu perfil antes de ordenar. Necesitamos tu nombre, teléfono y dirección de entrega.");
-      return;
-    }
-
-    // Check if approved
-    if (!isApproved) {
-      setError("Tu cuenta está pendiente de aprobación. Espera a que el administrador la active.");
-      return;
-    }
-
     setIsSubmitting(true);
     setError("");
+    setShowConfirm(false);
 
     try {
       const res = await fetch("/api/orders", {
@@ -91,6 +83,34 @@ export default function CartPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleSubmitClick = () => {
+    if (!isSignedIn) {
+      router.push("/auth/sign-in");
+      return;
+    }
+
+    if (items.length === 0) return;
+
+    // Check profile completion
+    if (!profileComplete) {
+      setError("Completa tu perfil antes de ordenar. Necesitamos tu nombre, teléfono y dirección de entrega.");
+      return;
+    }
+
+    // Check if approved
+    if (!isApproved) {
+      setError("Tu cuenta está pendiente de aprobación. Espera a que el administrador la active.");
+      return;
+    }
+
+    // Show confirmation modal
+    setShowConfirm(true);
+  };
+
+  const handleRemoveConfirm = (mealId: string) => {
+    setRemoveConfirmTarget(mealId);
   };
 
   if (items.length === 0) {
@@ -208,7 +228,7 @@ export default function CartPage() {
 
             {/* Remove */}
             <button
-              onClick={() => removeItem(item.mealId)}
+              onClick={() => handleRemoveConfirm(item.mealId)}
               className="flex h-10 w-10 items-center justify-center rounded-xl text-lt-charcoal/40 transition-colors hover:bg-red-50 hover:text-red-500"
             >
               <Trash2 className="h-4 w-4" />
@@ -241,7 +261,7 @@ export default function CartPage() {
         </div>
 
         <button
-          onClick={handleSubmit}
+          onClick={handleSubmitClick}
           disabled={isSubmitting}
           className="mt-6 flex w-full items-center justify-center rounded-xl bg-lt-terracotta py-4 font-semibold text-white transition-all hover:bg-lt-terracotta-dark disabled:opacity-50"
         >
@@ -273,6 +293,38 @@ export default function CartPage() {
           Seguir viendo el menú
         </Link>
       </div>
+
+      {/* ── Confirmación de pedido ── */}
+      <ConfirmModal
+        isOpen={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={handleConfirmOrder}
+        title="Confirmar Pedido"
+        message="¿Estás seguro de enviar este pedido? Una vez enviado, te contactaremos para coordinar la entrega y el pago."
+        confirmLabel={isSubmitting ? "Enviando..." : "Sí, enviar pedido"}
+        cancelLabel="Revisar de nuevo"
+        isLoading={isSubmitting}
+        variant="info"
+        items={items}
+        totalPrice={totalPrice}
+      />
+
+      {/* ── Confirmación de eliminar artículo ── */}
+      <ConfirmModal
+        isOpen={removeConfirmTarget !== null}
+        onClose={() => setRemoveConfirmTarget(null)}
+        onConfirm={() => {
+          if (removeConfirmTarget) {
+            removeItem(removeConfirmTarget);
+            setRemoveConfirmTarget(null);
+          }
+        }}
+        title="Eliminar Artículo"
+        message="¿Estás seguro de eliminar este artículo de tu carrito?"
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+        variant="danger"
+      />
     </div>
   );
 }

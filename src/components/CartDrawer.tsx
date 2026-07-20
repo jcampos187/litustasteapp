@@ -1,8 +1,10 @@
 "use client";
 
 import { X, Minus, Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { useCart } from "./CartProvider";
 import { formatCRC } from "@/lib/utils";
+import ConfirmModal from "./ConfirmModal";
 import Link from "next/link";
 
 interface CartDrawerProps {
@@ -11,6 +13,7 @@ interface CartDrawerProps {
 
 export default function CartDrawer({ onClose }: CartDrawerProps) {
   const { items, updateQuantity, removeItem, totalItems, totalPrice } = useCart();
+  const [removeConfirmTarget, setRemoveConfirmTarget] = useState<string | null>(null);
 
   return (
     <>
@@ -97,7 +100,7 @@ export default function CartDrawer({ onClose }: CartDrawerProps) {
 
                   {/* Remove */}
                   <button
-                    onClick={() => removeItem(item.mealId)}
+                    onClick={() => setRemoveConfirmTarget(item.mealId)}
                     className="flex h-8 w-8 items-center justify-center rounded-lg text-lt-charcoal/40 transition-colors hover:bg-red-50 hover:text-red-500"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -127,6 +130,23 @@ export default function CartDrawer({ onClose }: CartDrawerProps) {
           </div>
         )}
       </div>
+
+      {/* ── Confirmación de eliminar artículo ── */}
+      <ConfirmModal
+        isOpen={removeConfirmTarget !== null}
+        onClose={() => setRemoveConfirmTarget(null)}
+        onConfirm={() => {
+          if (removeConfirmTarget) {
+            removeItem(removeConfirmTarget);
+            setRemoveConfirmTarget(null);
+          }
+        }}
+        title="Eliminar Artículo"
+        message="¿Estás seguro de eliminar este artículo de tu carrito?"
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+        variant="danger"
+      />
     </>
   );
 }

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Search, SlidersHorizontal, Plus, Minus, Trash2, LogIn } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { useCart } from "@/components/CartProvider";
+import ConfirmModal from "@/components/ConfirmModal";
 import { formatCRC } from "@/lib/utils";
 
 interface MenuItem {
@@ -49,6 +50,7 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
   const [showFilters, setShowFilters] = useState(false);
   const { isSignedIn } = useAuth();
   const { addItem, updateQuantity, removeItem, items: cartItems } = useCart();
+  const [removeConfirmTarget, setRemoveConfirmTarget] = useState<string | null>(null);
 
   const toggleTag = (slug: string) => {
     setActiveTags((prev) =>
@@ -312,7 +314,7 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
                       <Plus className="h-3.5 w-3.5" />
                     </button>
                     <button
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => setRemoveConfirmTarget(item.id)}
                       className="ml-1 flex h-8 w-8 items-center justify-center rounded-lg text-lt-charcoal/30 transition-all hover:bg-red-50 hover:text-red-400 sm:h-9 sm:w-9"
                       aria-label="Eliminar del carrito"
                     >
@@ -360,6 +362,23 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
           </div>
         )}
       </div>
+
+      {/* ── Confirmación de eliminar artículo ── */}
+      <ConfirmModal
+        isOpen={removeConfirmTarget !== null}
+        onClose={() => setRemoveConfirmTarget(null)}
+        onConfirm={() => {
+          if (removeConfirmTarget) {
+            removeItem(removeConfirmTarget);
+            setRemoveConfirmTarget(null);
+          }
+        }}
+        title="Eliminar del Carrito"
+        message="¿Estás seguro de eliminar este platillo de tu carrito?"
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+        variant="danger"
+      />
     </div>
   );
 }
