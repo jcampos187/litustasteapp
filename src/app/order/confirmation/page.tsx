@@ -1,13 +1,32 @@
 "use client";
 
+import { useEffect } from "react";
 import { CheckCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import { Suspense } from "react";
 
 function ConfirmationContent() {
+  const { isLoaded, isSignedIn } = useAuth();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
+
+  // Redirect guests to sign-in
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push("/auth/sign-in");
+    }
+  }, [isLoaded, isSignedIn, router]);
+
+  if (!isSignedIn) {
+    return (
+      <div className="mx-auto max-w-2xl px-6 py-20 text-center">
+        <p className="text-lt-charcoal/60">Redirigiendo...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-20 text-center">
