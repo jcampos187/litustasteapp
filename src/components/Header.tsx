@@ -1,11 +1,29 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
+import { db } from "@/db";
+import { users } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import CartDrawerButton from "./CartDrawerButton";
 import UserMenu from "./UserMenu";
 import MobileMenu from "./MobileMenu";
 
 export default async function Header() {
   const { userId } = await auth();
+
+  // Check if the user is an admin
+  let isAdmin = false;
+  if (userId) {
+    try {
+      const [dbUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.clerkId, userId))
+        .limit(1);
+      isAdmin = !!dbUser && dbUser.role === "admin";
+    } catch {
+      // Gracefully handle DB errors
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-lt-cream-dark bg-white/95 backdrop-blur-md">
@@ -49,7 +67,7 @@ export default async function Header() {
           <CartDrawerButton />
 
           {/* Mobile menu (md and below) */}
-          <MobileMenu />
+          <MobileMenu isAdmin={isAdmin} />
 
           {/* Desktop auth (md and up) */}
           <div className="hidden items-center gap-3 md:flex">

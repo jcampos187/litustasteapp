@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { formatCRC, getOrderStatusLabel, getOrderStatusColor } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import CancelOrderButton from "@/components/CancelOrderButton";
 
 export default async function OrderDetailPage(props: { params: Promise<{ id: string }> }) {
   const { userId } = await auth();
@@ -116,6 +117,11 @@ export default async function OrderDetailPage(props: { params: Promise<{ id: str
             {formatCRC(total)}
           </span>
         </div>
+      </div>
+
+      {/* Cancel order (only when pending) */}
+      <div className="mt-6 flex justify-end">
+        <CancelOrderButton orderId={order.id} orderStatus={order.status} />
       </div>
 
       {/* Notes */}

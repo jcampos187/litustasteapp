@@ -46,14 +46,62 @@ export default function WeeklyMenuManager({
   const [selectedMeals, setSelectedMeals] = useState<string[]>(initialMenuItems);
   const [isSaving, setIsSaving] = useState(false);
   const [showSchedule, setShowSchedule] = useState(false);
+  /**
+   * Get the Monday of the current week
+   */
+  function getMonday(d: Date): Date {
+    const date = new Date(d);
+    const day = date.getDay(); // 0=Sun, 1=Mon ... 6=Sat
+    const diff = day === 0 ? -6 : 1 - day; // If Sunday, go back 6; else go back to Monday
+    date.setDate(date.getDate() + diff);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }
+
+  /**
+   * Get the Friday of the same week as the given date
+   */
+  function getFriday(d: Date): Date {
+    const monday = getMonday(d);
+    const friday = new Date(monday);
+    friday.setDate(friday.getDate() + 4); // Mon + 4 = Fri
+    return friday;
+  }
+
+  /**
+   * Format a date as YYYY-MM-DD for input[type=date]
+   */
+  function formatDateForInput(d: Date): string {
+    return d.toISOString().split("T")[0];
+  }
+
+  /**
+   * Generate label like "Semana del 21-25 Jul" from start/end dates
+   */
+  function generateLabel(start: Date, end: Date): string {
+    const dayStart = start.getDate();
+    const dayEnd = end.getDate();
+    const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+    const month = monthNames[start.getMonth()];
+    return `Semana del ${dayStart}-${dayEnd} ${month}`;
+  }
+
+  // Compute default Mon–Fri for the current week
+  const today = new Date();
+  const defaultMonday = getMonday(today);
+  const defaultFriday = getFriday(today);
+
   const [scheduleData, setScheduleData] = useState({
-    label: currentMenu?.label || "",
+    label: currentMenu?.label || generateLabel(
+      currentMenu?.weekStart ? new Date(currentMenu.weekStart) : defaultMonday,
+      currentMenu?.weekEnd ? new Date(currentMenu.weekEnd) : defaultFriday
+    ),
     weekStart: currentMenu?.weekStart
       ? new Date(currentMenu.weekStart).toISOString().split("T")[0]
-      : "",
+      : formatDateForInput(defaultMonday),
     weekEnd: currentMenu?.weekEnd
       ? new Date(currentMenu.weekEnd).toISOString().split("T")[0]
-      : "",
+      : formatDateForInput(defaultFriday),
     orderCutoff: currentMenu?.orderCutoff
       ? new Date(currentMenu.orderCutoff).toISOString().slice(0, 16)
       : "",
@@ -61,6 +109,22 @@ export default function WeeklyMenuManager({
       ? new Date(currentMenu.publishAt).toISOString().slice(0, 16)
       : "",
   });
+
+  // Auto-update label when dates change
+  const updateDate = (field: "weekStart" | "weekEnd", value: string) => {
+    setScheduleData((prev) => {
+      const updated = { ...prev, [field]: value };
+      // Auto-generate label if both dates are set
+      if (updated.weekStart && updated.weekEnd) {
+        const start = new Date(updated.weekStart + "T00:00:00");
+        const end = new Date(updated.weekEnd + "T00:00:00");
+        if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+          updated.label = generateLabel(start, end);
+        }
+      }
+      return updated;
+    });
+  };
 
   const toggleMeal = (mealId: string) => {
     setSelectedMeals((prev) =>
@@ -153,9 +217,7 @@ export default function WeeklyMenuManager({
               <input
                 type="date"
                 value={scheduleData.weekStart}
-                onChange={(e) =>
-                  setScheduleData((p) => ({ ...p, weekStart: e.target.value }))
-                }
+                onChange={(e) => updateDate("weekStart", e.target.value)}
                 className="mt-1 w-full rounded-lg border border-lt-cream-dark px-3 py-2 text-sm outline-none focus:border-lt-terracotta"
               />
             </div>
@@ -166,9 +228,7 @@ export default function WeeklyMenuManager({
               <input
                 type="date"
                 value={scheduleData.weekEnd}
-                onChange={(e) =>
-                  setScheduleData((p) => ({ ...p, weekEnd: e.target.value }))
-                }
+                onChange={(e) => updateDate("weekEnd", e.target.value)}
                 className="mt-1 w-full rounded-lg border border-lt-cream-dark px-3 py-2 text-sm outline-none focus:border-lt-terracotta"
               />
             </div>

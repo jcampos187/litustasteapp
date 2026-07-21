@@ -6,6 +6,7 @@ import { eq, desc, inArray } from "drizzle-orm";
 import { formatCRC, getOrderStatusLabel, getOrderStatusColor } from "@/lib/utils";
 import { Package } from "lucide-react";
 import Link from "next/link";
+import CancelOrderButton from "@/components/CancelOrderButton";
 
 export default async function OrdersPage() {
   const { userId } = await auth();
@@ -86,58 +87,69 @@ export default async function OrdersPage() {
             );
 
             return (
-              <Link
+              <div
                 key={order.id}
-                href={`/account/orders/${order.id}`}
-                className="block rounded-2xl border border-lt-cream-dark bg-white p-6 transition-all hover:border-lt-terracotta/20 hover:shadow-md"
+                className="rounded-2xl border border-lt-cream-dark bg-white transition-all hover:border-lt-terracotta/20 hover:shadow-md"
               >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="font-bold text-lt-warm-brown">
-                      Pedido #{order.id.slice(0, 8)}
-                    </p>
-                    <p className="mt-1 text-sm text-lt-charcoal/50">
-                      {new Date(order.createdAt).toLocaleDateString("es-CR", {
-                        weekday: "long",
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </p>
-                    {order.weeklyMenuLabel && (
-                      <p className="text-sm text-lt-olive-dark">
-                        {order.weeklyMenuLabel}
+                <Link
+                  href={`/account/orders/${order.id}`}
+                  className="block p-6"
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-bold text-lt-warm-brown">
+                        Pedido #{order.id.slice(0, 8)}
                       </p>
-                    )}
-                  </div>
-                  <span
-                    className={`rounded-full px-3 py-1 text-xs font-medium ${getOrderStatusColor(order.status)}`}
-                  >
-                    {getOrderStatusLabel(order.status)}
-                  </span>
-                </div>
-
-                <div className="mt-4 border-t border-lt-cream-dark pt-4">
-                  <div className="space-y-2">
-                    {items.map((item) => (
-                      <div key={item.id} className="flex items-center justify-between text-sm">
-                        <span className="text-lt-charcoal/70">
-                          {item.quantity}x {item.mealName}
-                        </span>
-                        <span className="font-medium text-lt-charcoal">
-                          {formatCRC(Number(item.unitPrice) * item.quantity)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-3 flex items-center justify-between border-t border-lt-cream-dark pt-3">
-                    <span className="text-sm font-semibold">Total</span>
-                    <span className="font-bold text-lt-terracotta">
-                      {formatCRC(total)}
+                      <p className="mt-1 text-sm text-lt-charcoal/50">
+                        {new Date(order.createdAt).toLocaleDateString("es-CR", {
+                          weekday: "long",
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </p>
+                      {order.weeklyMenuLabel && (
+                        <p className="text-sm text-lt-olive-dark">
+                          {order.weeklyMenuLabel}
+                        </p>
+                      )}
+                    </div>
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-medium ${getOrderStatusColor(order.status)}`}
+                    >
+                      {getOrderStatusLabel(order.status)}
                     </span>
                   </div>
+
+                  <div className="mt-4 border-t border-lt-cream-dark pt-4">
+                    <div className="space-y-2">
+                      {items.map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex items-center justify-between text-sm"
+                        >
+                          <span className="text-lt-charcoal/70">
+                            {item.quantity}x {item.mealName}
+                          </span>
+                          <span className="font-medium text-lt-charcoal">
+                            {formatCRC(Number(item.unitPrice) * item.quantity)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 flex items-center justify-between border-t border-lt-cream-dark pt-3">
+                      <span className="text-sm font-semibold">Total</span>
+                      <span className="font-bold text-lt-terracotta">
+                        {formatCRC(total)}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+                {/* Cancel button — outside Link to prevent navigation clashes */}
+                <div className="px-6 pb-5">
+                  <CancelOrderButton orderId={order.id} orderStatus={order.status} />
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>
