@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, beforeAll } from "vitest";
 
 // ── Mock Clerk auth ────────────────────────────────────────────
 const mockAuth = vi.fn();
@@ -39,7 +39,15 @@ function setupMockChain() {
 }
 
 // ── Import the cancel route handler ────────────────────────────
-// Dynamic import to work around vi.mock hoisting
+// Dynamic import to work around vi.mock hoisting — do once before all tests
+// with a generous timeout since module resolution can be slow in jsdom.
+type CancelRoute = typeof import("../cancel/route");
+let PATCH: CancelRoute["PATCH"];
+
+beforeAll(async () => {
+  const mod = await import("../cancel/route");
+  PATCH = mod.PATCH;
+}, 20000);
 
 describe("Cancel Order API", () => {
   beforeEach(() => {
@@ -48,11 +56,8 @@ describe("Cancel Order API", () => {
 
   describe("authentication", () => {
     it("returns 401 when user is not authenticated", async () => {
-      // Longer timeout for first dynamic import in this file
-      vi.setConfig({ testTimeout: 10000 });
       mockAuth.mockResolvedValue({ userId: null });
 
-      const { PATCH } = await import("../cancel/route");
       const request = new Request("http://localhost:3000/api/orders/order-123/cancel", {
         method: "PATCH",
       });
@@ -73,7 +78,7 @@ describe("Cancel Order API", () => {
       // User lookup returns empty
       limitFn.mockResolvedValueOnce([]);
 
-      const { PATCH } = await import("../cancel/route");
+
       const request = new Request("http://localhost:3000/api/orders/order-123/cancel", {
         method: "PATCH",
       });
@@ -96,7 +101,7 @@ describe("Cancel Order API", () => {
       // Order not found
       limitFn.mockResolvedValueOnce([]);
 
-      const { PATCH } = await import("../cancel/route");
+
       const request = new Request("http://localhost:3000/api/orders/order-123/cancel", {
         method: "PATCH",
       });
@@ -119,7 +124,7 @@ describe("Cancel Order API", () => {
         { id: "order-123", customerId: "other-user-id", status: "pending" },
       ]);
 
-      const { PATCH } = await import("../cancel/route");
+
       const request = new Request("http://localhost:3000/api/orders/order-123/cancel", {
         method: "PATCH",
       });
@@ -147,7 +152,7 @@ describe("Cancel Order API", () => {
     it("returns 400 when order is already received", async () => {
       setupStatusTest("recibido");
 
-      const { PATCH } = await import("../cancel/route");
+
       const request = new Request("http://localhost:3000/api/orders/order-123/cancel", {
         method: "PATCH",
       });
@@ -163,7 +168,7 @@ describe("Cancel Order API", () => {
     it("returns 400 when order is completed", async () => {
       setupStatusTest("completed");
 
-      const { PATCH } = await import("../cancel/route");
+
       const request = new Request("http://localhost:3000/api/orders/order-123/cancel", {
         method: "PATCH",
       });
@@ -179,7 +184,7 @@ describe("Cancel Order API", () => {
     it("returns 400 when order is already cancelled", async () => {
       setupStatusTest("cancelled");
 
-      const { PATCH } = await import("../cancel/route");
+
       const request = new Request("http://localhost:3000/api/orders/order-123/cancel", {
         method: "PATCH",
       });
@@ -208,7 +213,7 @@ describe("Cancel Order API", () => {
         { id: "order-123", customerId: "db-user-123", status: "cancelled" },
       ]);
 
-      const { PATCH } = await import("../cancel/route");
+
       const request = new Request("http://localhost:3000/api/orders/order-123/cancel", {
         method: "PATCH",
       });

@@ -9,6 +9,7 @@ import {
   ShoppingBag,
   Users,
   Settings,
+  Bell,
   LogOut,
   ChevronLeft,
   ChevronRight,
@@ -54,6 +55,11 @@ const navItems = [
     label: "Clientes",
     href: "/admin/customers",
     icon: Users,
+  },
+  {
+    label: "Notificaciones",
+    href: "/admin/subscriptions",
+    icon: Bell,
   },
   {
     label: "Configuración",
