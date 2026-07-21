@@ -4,6 +4,25 @@ import { db } from "@/db";
 import { weeklyMenus, weeklyMenuItems, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
+/**
+ * Parse a YYYY-MM-DD date string as Costa Rica local midnight (UTC-6).
+ * The server runs in UTC, so CR midnight = 06:00 UTC.
+ */
+function parseCRDate(dateStr: string): Date {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d, 6, 0, 0)); // CR midnight = UTC 06:00
+}
+
+/**
+ * Parse a YYYY-MM-DDTHH:mm datetime-local string as Costa Rica local time (UTC-6).
+ */
+function parseCRDateTime(dtStr: string): Date {
+  const [datePart, timePart] = dtStr.split("T");
+  const [y, m, d] = datePart.split("-").map(Number);
+  const [hh, mm] = timePart.split(":").map(Number);
+  return new Date(Date.UTC(y, m - 1, d, hh + 6, mm, 0)); // CR time + 6h = UTC
+}
+
 export async function POST(request: Request) {
   const { userId } = await auth();
   if (!userId) {
@@ -36,11 +55,11 @@ export async function POST(request: Request) {
       .insert(weeklyMenus)
       .values({
         label: label || `Menú Semanal`,
-        weekStart: weekStart ? new Date(weekStart + "T00:00:00") : new Date(),
+        weekStart: weekStart ? parseCRDate(weekStart) : new Date(),
         weekEnd: weekEnd
-          ? new Date(weekEnd + "T00:00:00")
+          ? parseCRDate(weekEnd)
           : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        orderCutoff: orderCutoff ? new Date(orderCutoff) : null,
+        orderCutoff: orderCutoff ? parseCRDateTime(orderCutoff) : null,
         publishAt: publishAt ? new Date(publishAt) : null,
         isPublished: publish || false,
         publishedAt: publish ? new Date() : null,
@@ -95,9 +114,9 @@ export async function PUT(request: Request) {
       .update(weeklyMenus)
       .set({
         label,
-        weekStart: weekStart ? new Date(weekStart + "T00:00:00") : undefined,
-        weekEnd: weekEnd ? new Date(weekEnd + "T00:00:00") : undefined,
-        orderCutoff: orderCutoff ? new Date(orderCutoff) : null,
+        weekStart: weekStart ? parseCRDate(weekStart) : undefined,
+        weekEnd: weekEnd ? parseCRDate(weekEnd) : undefined,
+        orderCutoff: orderCutoff ? parseCRDateTime(orderCutoff) : null,
         publishAt: publishAt ? new Date(publishAt) : null,
         isPublished: publish || undefined,
         publishedAt: publish ? new Date() : undefined,

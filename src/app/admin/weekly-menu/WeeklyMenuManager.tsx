@@ -103,10 +103,10 @@ export default function WeeklyMenuManager({
       ? new Date(currentMenu.weekEnd).toISOString().split("T")[0]
       : formatDateForInput(defaultFriday),
     orderCutoff: currentMenu?.orderCutoff
-      ? new Date(currentMenu.orderCutoff).toISOString().slice(0, 16)
+      ? new Date(currentMenu.orderCutoff.getTime() - 6 * 3600000).toISOString().slice(0, 16)
       : "",
     publishAt: currentMenu?.publishAt
-      ? new Date(currentMenu.publishAt).toISOString().slice(0, 16)
+      ? new Date(currentMenu.publishAt.getTime() - 6 * 3600000).toISOString().slice(0, 16)
       : "",
   });
 
