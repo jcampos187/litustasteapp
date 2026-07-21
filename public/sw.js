@@ -39,6 +39,57 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+// ── Push: display notifications ────────────────────────────────
+self.addEventListener("push", (event) => {
+  if (!event.data) return;
+
+  try {
+    const data = event.data.json();
+    const title = data.title || "Litus Taste";
+    const options = {
+      body: data.body || "",
+      icon: data.icon || "/icon-192.png",
+      badge: data.badge || "/icon-192.png",
+      vibrate: [200, 100, 200],
+      data: data.data || {},
+    };
+
+    event.waitUntil(self.registration.showNotification(title, options));
+  } catch {
+    // If parsing fails, show a fallback notification
+    event.waitUntil(
+      self.registration.showNotification("Litus Taste", {
+        body: event.data.text(),
+        icon: "/icon-192.png",
+      })
+    );
+  }
+});
+
+// ── Notification click: navigate to the URL from the notification data ──
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const url = event.notification.data?.url || "/menu";
+
+  event.waitUntil(
+    clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((clientList) => {
+        // If an existing tab is open, focus it
+        for (const client of clientList) {
+          if (client.url === url && "focus" in client) {
+            return client.focus();
+          }
+        }
+        // Otherwise open a new tab
+        if (clients.openWindow) {
+          return clients.openWindow(url);
+        }
+      })
+  );
+});
+
 // ── Fetch: serve from cache if available, else network with cache fallback ──
 self.addEventListener("fetch", (event) => {
   // Skip non-GET requests

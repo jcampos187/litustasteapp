@@ -1,7 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { User } from "lucide-react";
+import { User, Bell } from "lucide-react";
 import ProfileForm from "./ProfileForm";
+import PushSubscribeButton from "@/components/PushSubscribeButton";
 
 export default async function ProfilePage() {
   const { userId } = await auth();
@@ -23,6 +24,24 @@ export default async function ProfilePage() {
 
       <div className="mt-8">
         <ProfileForm />
+      </div>
+
+      {/* Push notification preferences */}
+      <div className="mt-8 rounded-2xl border border-lt-cream-dark bg-white p-6">
+        <div className="flex items-center gap-3">
+          <Bell className="h-5 w-5 text-lt-terracotta" />
+          <div>
+            <h2 className="font-semibold text-lt-warm-brown">
+              Notificaciones Push
+            </h2>
+            <p className="text-sm text-lt-charcoal/60">
+              Recibe notificaciones cuando se publique un nuevo menú semanal
+            </p>
+          </div>
+        </div>
+        <div className="mt-4">
+          <PushSubscribeButton />
+        </div>
       </div>
     </div>
   );
