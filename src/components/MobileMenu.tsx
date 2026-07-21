@@ -70,9 +70,9 @@ export default function MobileMenu({ isAdmin = false }: MobileMenuProps) {
         />
       )}
 
-      {/* Sliding menu panel — darker theme */}
+      {/* Sliding menu panel — darkest theme */}
       <div
-        className={`fixed right-0 top-0 z-50 h-full w-[300px] max-w-[85vw] bg-gray-900 shadow-2xl shadow-black/30 transition-transform duration-300 ease-out ${
+        className={`fixed right-0 top-0 z-50 h-full w-[300px] max-w-[85vw] bg-black shadow-2xl shadow-black/50 transition-transform duration-300 ease-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
