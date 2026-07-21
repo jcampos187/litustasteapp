@@ -8,12 +8,16 @@ import { usePathname } from "next/navigation";
 import {
   User,
   ShoppingBag,
-  LayoutDashboard,
+  ShieldCheck,
   LogOut,
   ChevronDown,
 } from "lucide-react";
 
-export default function UserMenu() {
+interface UserMenuProps {
+  isAdmin?: boolean;
+}
+
+export default function UserMenu({ isAdmin = false }: UserMenuProps) {
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -82,13 +86,15 @@ export default function UserMenu() {
             <ShoppingBag className="h-4 w-4" />
             Mis Pedidos
           </Link>
-          <Link
-            href="/admin"
-            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-lt-charcoal/70 transition-colors hover:bg-lt-terracotta/5 hover:text-lt-terracotta"
-          >
-            <LayoutDashboard className="h-4 w-4" />
-            Admin Panel
-          </Link>
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-lt-charcoal/70 transition-colors hover:bg-lt-terracotta/5 hover:text-lt-terracotta"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              Admin Panel
+            </Link>
+          )}
 
           <div className="border-t border-lt-cream-dark mt-1 pt-1">
             <SignOutButton>

@@ -72,7 +72,7 @@ export default async function Header() {
           {/* Desktop auth (md and up) */}
           <div className="hidden items-center gap-3 md:flex">
             {userId ? (
-              <UserMenu />
+              <UserMenu isAdmin={isAdmin} />
             ) : (
               <Link
                 href="/auth/sign-in"
