@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import Providers from "@/components/Providers";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PwaRegistration from "@/components/PwaRegistration";
 import "./globals.css";
 
 const inter = Inter({
@@ -37,7 +38,15 @@ export const metadata: Metadata = {
     type: "website",
   },
   icons: {
-    icon: "/logo.png",
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
+  manifest: "/manifest.json",
+  other: {
+    "theme-color": "#15803D",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "apple-mobile-web-app-title": "Litus Taste",
   },
   robots: {
     index: true,
@@ -57,6 +66,7 @@ export default function RootLayout({
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <PwaRegistration />
         </Providers>
       </body>
     </html>
