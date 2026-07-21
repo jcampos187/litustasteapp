@@ -1,5 +1,6 @@
 import { Webhook } from "svix";
 import { NextResponse } from "next/server";
+import { clerkClient } from "@clerk/nextjs/server";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -99,6 +100,16 @@ export async function POST(request: Request) {
             updatedAt: new Date(),
           })
           .where(eq(users.clerkId, clerkId));
+
+        // Sync role to Clerk public metadata for edge-level middleware checks
+        try {
+          const client = await clerkClient();
+          await client.users.updateUser(clerkId, {
+            publicMetadata: { role: existingUser.role },
+          });
+        } catch (e) {
+          console.error("Failed to sync role to Clerk metadata:", e);
+        }
       } else {
         // Create new user (default role is customer, inactive until approved)
         await db.insert(users).values({
@@ -109,6 +120,16 @@ export async function POST(request: Request) {
           role: "customer",
           isActive: false,
         });
+
+        // Sync default role to Clerk public metadata
+        try {
+          const client = await clerkClient();
+          await client.users.updateUser(clerkId, {
+            publicMetadata: { role: "customer" },
+          });
+        } catch (e) {
+          console.error("Failed to sync role to Clerk metadata:", e);
+        }
       }
     }
 
