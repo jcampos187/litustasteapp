@@ -75,17 +75,34 @@ Or use the Drizzle Studio:
 npm run db:studio
 ```
 
-### 6. Run the app
+### 6. Set up push notifications (optional)
+
+```bash
+# Generate VAPID keys for browser push notifications
+npx tsx scripts/generate-vapid-keys.ts
+```
+
+Add the three generated values to `.env.local`:
+- `NEXT_PUBLIC_VAPID_PUBLIC_KEY`
+- `VAPID_PRIVATE_KEY`
+- `VAPID_SUBJECT`
+
+> **Note:** After publishing a new weekly menu, admins can click "Notificar Clientes"
+> to send push notifications to all subscribed customers.
+
+### 7. Run the app
 
 ```bash
 npm run dev
 ```
 
-### 7. Deploy to Vercel
+### 8. Deploy to Vercel
 
 ```bash
 vercel
 ```
+
+Remember to set the VAPID keys in your Vercel environment variables too.
 
 ## Project Structure
 
@@ -123,3 +140,5 @@ litus-taste/
 - 🏪 **Admin Dashboard** — Manage meals, menus, orders, customers
 - 🌿 **Dietary Tags** — Filter by dietary needs (vegan, keto, gluten-free, etc.)
 - 🇨🇷 **CRC Prices** — Costa Rican colones formatting
+- 📬 **Push Notifications** — Customers can opt in to receive browser push alerts when new menus are published
+- 📱 **PWA** — Installable on mobile devices, works offline with service worker caching

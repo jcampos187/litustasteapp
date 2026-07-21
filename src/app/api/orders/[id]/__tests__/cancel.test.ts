@@ -48,6 +48,8 @@ describe("Cancel Order API", () => {
 
   describe("authentication", () => {
     it("returns 401 when user is not authenticated", async () => {
+      // Longer timeout for first dynamic import in this file
+      vi.setConfig({ testTimeout: 10000 });
       mockAuth.mockResolvedValue({ userId: null });
 
       const { PATCH } = await import("../cancel/route");
