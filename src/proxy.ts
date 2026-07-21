@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
@@ -13,9 +14,14 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 const authMiddleware = clerkMiddleware(async (auth, req) => {
-  // Protect non-public routes
+  // Protect non-public routes from unauthenticated users
   if (!isPublicRoute(req)) {
-    await auth.protect();
+    const { userId } = await auth();
+    if (!userId) {
+      const signInUrl = new URL("/auth/sign-in", req.url);
+      signInUrl.searchParams.set("redirect_url", req.nextUrl.pathname);
+      return NextResponse.redirect(signInUrl);
+    }
   }
 });
 
