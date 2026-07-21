@@ -1,5 +1,4 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
@@ -8,26 +7,15 @@ const isPublicRoute = createRouteMatcher([
   "/auth(.*)",
   "/api/uploadthing",
   "/api/auth(.*)",
+  "/api/settings",
+  "/api/meals(.*)",
+  "/api/orders(.*)",
 ]);
 
 const authMiddleware = clerkMiddleware(async (auth, req) => {
   // Protect non-public routes
   if (!isPublicRoute(req)) {
     await auth.protect();
-  }
-
-  // For admin routes, also check admin role
-  if (req.nextUrl.pathname.startsWith("/admin")) {
-    const { sessionClaims } = await auth();
-    const metadata = sessionClaims?.public_metadata as
-      | Record<string, unknown>
-      | undefined;
-    const role = metadata?.role as string | undefined;
-
-    if (role !== "admin") {
-      const homeUrl = new URL("/", req.url);
-      return NextResponse.redirect(homeUrl);
-    }
   }
 });
 
