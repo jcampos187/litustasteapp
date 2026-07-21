@@ -4,8 +4,8 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import CartDrawerButton from "./CartDrawerButton";
-import UserMenu from "./UserMenu";
 import MobileMenu from "./MobileMenu";
+import DesktopAuth from "./DesktopAuth";
 
 export default async function Header() {
   const { userId } = await auth();
@@ -71,16 +71,7 @@ export default async function Header() {
 
           {/* Desktop auth (md and up) */}
           <div className="hidden items-center gap-3 md:flex">
-            {userId ? (
-              <UserMenu isAdmin={isAdmin} />
-            ) : (
-              <Link
-                href="/auth/sign-in"
-                className="rounded-lg border border-lt-card-border px-5 py-2.5 text-sm font-medium text-lt-charcoal/70 transition-all hover:border-lt-green/30 hover:text-lt-green"
-              >
-                Iniciar Sesión
-              </Link>
-            )}
+            <DesktopAuth isAdmin={isAdmin} />
           </div>
         </div>
       </div>

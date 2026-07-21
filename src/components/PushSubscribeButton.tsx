@@ -12,17 +12,19 @@ interface PushSubscriptionInfo {
 export default function PushSubscribeButton() {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSupported, setIsSupported] = useState(true);
   const [existingSub, setExistingSub] = useState<PushSubscriptionInfo | null>(
     null
   );
 
+  // Determine if push is supported (computed once, not state)
+  const isSupported =
+    typeof window !== "undefined" &&
+    "serviceWorker" in navigator &&
+    "PushManager" in window;
+
   // Check existing subscription on mount
   useEffect(() => {
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-      setIsSupported(false);
-      return;
-    }
+    if (!isSupported) return;
 
     navigator.serviceWorker.ready.then(async (reg) => {
       const sub = await reg.pushManager.getSubscription();
@@ -37,7 +39,7 @@ export default function PushSubscribeButton() {
         setIsSubscribed(true);
       }
     });
-  }, []);
+  }, [isSupported]);
 
   const subscribe = useCallback(async () => {
     setIsLoading(true);

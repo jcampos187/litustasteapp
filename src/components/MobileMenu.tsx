@@ -70,40 +70,57 @@ export default function MobileMenu({ isAdmin = false }: MobileMenuProps) {
         />
       )}
 
-      {/* Sliding menu panel — darkest theme */}
+      {/* Sliding menu panel — warm dark theme */}
       <div
-        className={`fixed right-0 top-0 z-50 h-full w-[300px] max-w-[85vw] bg-black shadow-2xl shadow-black/50 transition-transform duration-300 ease-out ${
+        className={`fixed right-0 top-0 z-50 h-full w-[300px] max-w-[85vw] bg-lt-dark shadow-2xl shadow-black/50 transition-transform duration-300 ease-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex h-full flex-col">
           {/* Close button at top */}
-          <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+          <div className="flex items-center justify-between border-b border-white/5 px-5 py-4">
             <span className="font-[family-name:var(--font-display)] text-base font-semibold text-white">
               Menú
             </span>
             <button
               onClick={() => setIsOpen(false)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-lt-sage transition-colors hover:bg-white/5 hover:text-white"
               aria-label="Cerrar menú"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
 
+          {/* Logo branding */}
+          <div className="flex items-center gap-3 border-b border-white/5 px-5 py-4">
+            <img
+              src="/logo.png"
+              alt="Litus Taste"
+              className="h-9 w-9 rounded-lg object-contain"
+            />
+            <div className="flex flex-col">
+              <span className="font-[family-name:var(--font-display)] text-base font-semibold leading-tight tracking-tight text-white">
+                Litus <span className="text-lt-green-light">Taste</span>
+              </span>
+              <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-lt-sage">
+                Comida Preparada
+              </span>
+            </div>
+          </div>
+
           {/* User info (if signed in) */}
           {isSignedIn && user && (
-            <div className="flex items-center gap-3 border-b border-white/10 px-5 py-4">
+            <div className="flex items-center gap-3 border-b border-white/5 px-5 py-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-lt-terracotta to-lt-gold text-sm font-bold text-white">
                 {initial.toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-100">
+                <p className="truncate text-sm font-medium text-lt-cream">
                   {user.firstName
                     ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`
                     : "Usuario"}
                 </p>
-                <p className="truncate text-xs text-gray-400">
+                <p className="truncate text-xs text-lt-sage">
                   {user.emailAddresses[0]?.emailAddress}
                 </p>
               </div>
@@ -112,19 +129,19 @@ export default function MobileMenu({ isAdmin = false }: MobileMenuProps) {
 
           {/* Navigation links */}
           <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-            <p className="px-2 pb-2 text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">
+            <p className="px-2 pb-2 text-xs font-semibold uppercase tracking-[0.12em] text-lt-sage">
               Navegación
             </p>
             <Link
               href="/"
-              className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-gray-300 transition-colors hover:bg-white/10 hover:text-lt-green-light"
+              className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-lt-warm-gray transition-colors hover:bg-white/5 hover:text-lt-green-light"
               onClick={() => setIsOpen(false)}
             >
               Inicio
             </Link>
             <Link
               href="/menu"
-              className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-gray-300 transition-colors hover:bg-white/10 hover:text-lt-green-light"
+              className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-lt-warm-gray transition-colors hover:bg-white/5 hover:text-lt-green-light"
               onClick={() => setIsOpen(false)}
             >
               Menú Semanal
@@ -133,13 +150,13 @@ export default function MobileMenu({ isAdmin = false }: MobileMenuProps) {
             {isSignedIn && (
               <>
                 <div className="pt-4 pb-2">
-                  <p className="px-2 text-xs font-semibold uppercase tracking-[0.12em] text-gray-500">
+                  <p className="px-2 text-xs font-semibold uppercase tracking-[0.12em] text-lt-sage">
                     Mi Cuenta
                   </p>
                 </div>
                 <Link
                   href="/account/profile"
-                  className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-gray-300 transition-colors hover:bg-white/10 hover:text-lt-terracotta-light"
+                  className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-lt-warm-gray transition-colors hover:bg-white/5 hover:text-lt-terracotta-light"
                   onClick={() => setIsOpen(false)}
                 >
                   <User className="h-4 w-4" />
@@ -147,7 +164,7 @@ export default function MobileMenu({ isAdmin = false }: MobileMenuProps) {
                 </Link>
                 <Link
                   href="/account/orders"
-                  className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-gray-300 transition-colors hover:bg-white/10 hover:text-lt-terracotta-light"
+                  className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-lt-warm-gray transition-colors hover:bg-white/5 hover:text-lt-terracotta-light"
                   onClick={() => setIsOpen(false)}
                 >
                   <ShoppingBag className="h-4 w-4" />
@@ -170,10 +187,10 @@ export default function MobileMenu({ isAdmin = false }: MobileMenuProps) {
           </nav>
 
           {/* Bottom: Auth buttons */}
-          <div className="border-t border-white/10 p-4">
+          <div className="border-t border-white/5 p-4">
             {isSignedIn ? (
               <SignOutButton>
-                <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 px-4 py-3 text-sm font-medium text-gray-300 transition-colors hover:bg-white/10 hover:text-red-400">
+                <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm font-medium text-lt-warm-gray transition-colors hover:bg-white/5 hover:text-red-400">
                   <LogOut className="h-4 w-4" />
                   Cerrar Sesión
                 </button>
@@ -182,7 +199,7 @@ export default function MobileMenu({ isAdmin = false }: MobileMenuProps) {
               <div className="flex flex-col gap-2">
                 <Link
                   href="/auth/sign-in"
-                  className="flex w-full items-center justify-center rounded-xl border border-white/15 px-4 py-3 text-sm font-medium text-gray-300 transition-colors hover:border-lt-green-light/30 hover:text-lt-green-light"
+                  className="flex w-full items-center justify-center rounded-xl border border-white/10 px-4 py-3 text-sm font-medium text-lt-warm-gray transition-colors hover:border-lt-green-light/30 hover:text-lt-green-light"
                   onClick={() => setIsOpen(false)}
                 >
                   Iniciar Sesión

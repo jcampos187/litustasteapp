@@ -8,6 +8,8 @@
  * The fix: add 6 hours to existing weekStart and weekEnd so they represent
  * local midnight in CR timezone (2026-07-20T06:00:00.000Z = July 20 at 00:00 CR).
  */
+/* eslint-disable no-console */
+// Migration script needs structured console output
 import { db } from "@/db";
 import { weeklyMenus } from "@/db/schema";
 import { sql } from "drizzle-orm";
@@ -37,8 +39,6 @@ async function main() {
     // which means they're off by 6h from CR local time
     const wsHours = ws.getUTCHours();
     const wsMinutes = ws.getUTCMinutes();
-    const weHours = we.getUTCHours();
-    const weMinutes = we.getUTCMinutes();
 
     if (wsHours === 0 && wsMinutes === 0) {
       // Add 6 hours to shift from UTC midnight to CR midnight
