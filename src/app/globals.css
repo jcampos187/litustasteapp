@@ -387,6 +387,8 @@ body {
 
 
 /* ─── Staggered animation delays ──────────────────────────────── */
+.animate-fade-in { animation: fadeIn 0.2s ease-out; }
+
 .delay-100 { animation-delay: 100ms; }
 .delay-200 { animation-delay: 200ms; }
 .delay-300 { animation-delay: 300ms; }
