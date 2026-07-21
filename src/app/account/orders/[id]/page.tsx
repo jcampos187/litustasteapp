@@ -139,37 +139,65 @@ export default async function OrderDetailPage(props: { params: Promise<{ id: str
         <h3 className="text-sm font-semibold uppercase tracking-wider text-lt-charcoal/50">
           Estado del Pedido
         </h3>
-        <div className="mt-4 space-y-4">
-          {[
-            { status: "pending", label: "Pendiente" },
-            { status: "recibido", label: "Recibido" },
-            { status: "completed", label: "Completado" },
-          ].map((step, i) => {
-            const statusOrder = ["pending", "recibido", "completed"];
-            const currentIndex = statusOrder.indexOf(order.status);
-            const isActive = statusOrder.indexOf(step.status) <= currentIndex || order.status === "cancelled";
-            return (
-              <div key={step.status} className="flex items-center gap-4">
-                <div
-                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                    isActive
-                      ? "bg-lt-terracotta text-white"
-                      : "bg-lt-cream-dark text-lt-charcoal/30"
-                  }`}
-                >
-                  {isActive ? "✓" : i + 1}
+
+        {order.status === "cancelled" ? (
+          /* ── Cancelled: pending crossed out + red line to Cancelado ── */
+          <div className="mt-4 space-y-0">
+            <div className="flex items-start gap-4">
+              <div className="flex flex-col items-center">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-lt-terracotta/50 text-xs font-bold text-white">
+                  ✓
                 </div>
-                <span
-                  className={`text-sm ${
-                    isActive ? "font-medium text-lt-charcoal" : "text-lt-charcoal/40"
-                  }`}
-                >
-                  {step.label}
-                </span>
+                <div className="h-4 w-0.5 bg-red-300" />
               </div>
-            );
-          })}
-        </div>
+              <span className="mt-1 text-sm font-medium text-lt-charcoal/50 line-through">
+                Pendiente
+              </span>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-600">
+                ✕
+              </div>
+              <span className="text-sm font-bold text-red-600">
+                Cancelado
+              </span>
+            </div>
+          </div>
+        ) : (
+          /* ── Normal progressive timeline ── */
+          <div className="mt-4 space-y-4">
+            {[
+              { status: "pending", label: "Pendiente" },
+              { status: "recibido", label: "Recibido" },
+              { status: "completed", label: "Completado" },
+            ].map((step, i) => {
+              const statusOrder = ["pending", "recibido", "completed"];
+              const currentIndex = statusOrder.indexOf(order.status);
+              const isActive = statusOrder.indexOf(step.status) <= currentIndex;
+              return (
+                <div key={step.status} className="flex items-center gap-4">
+                  <div
+                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                      isActive
+                        ? "bg-lt-terracotta text-white"
+                        : "bg-lt-cream-dark text-lt-charcoal/30"
+                    }`}
+                  >
+                    {isActive ? "✓" : i + 1}
+                  </div>
+                  <span
+                    className={`text-sm ${
+                      isActive ? "font-medium text-lt-charcoal" : "text-lt-charcoal/40"
+                    }`}
+                  >
+                    {step.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
