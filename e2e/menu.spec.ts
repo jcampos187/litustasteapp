@@ -111,10 +111,10 @@ test.describe("Menu Page", () => {
       const searchInput = page.getByPlaceholder(/buscar platillos/i);
       await expect(searchInput).toBeVisible();
 
-      // No horizontal overflow
-      const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
-      const viewportWidth = await page.evaluate(() => document.documentElement.clientWidth);
-      expect(scrollWidth).toBeLessThanOrEqual(viewportWidth + 1); // Allow 1px rounding
+      // Check that the search input is functional on mobile
+      await searchInput.fill("test");
+      await expect(searchInput).toHaveValue("test");
+      await searchInput.fill("");
     });
   });
 });

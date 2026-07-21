@@ -15,7 +15,7 @@ test.describe("Landing Page", () => {
 
     // Should have the premium badge with fresh food message
     await expect(
-      page.getByText(/comida preparada fresca/i)
+      page.getByText(/comida preparada fresca/i).first()
     ).toBeVisible();
   });
 
@@ -23,7 +23,7 @@ test.describe("Landing Page", () => {
     await page.goto("/");
 
     // The main CTA should link to /menu (actual text: "Ver Menú Semanal")
-    const menuCta = page.getByRole("link", { name: /ver men/i });
+    const menuCta = page.getByRole("link", { name: /ver men/i }).first();
     await expect(menuCta).toBeVisible();
 
     // Click the CTA
@@ -47,8 +47,8 @@ test.describe("Landing Page", () => {
 
     // Should show the 3 steps
     await expect(page.getByText(/elige tu menú/i)).toBeVisible();
-    await expect(page.getByText(/haz tu pedido/i)).toBeVisible();
-    await expect(page.getByText(/disfruta/i)).toBeVisible();
+    await expect(page.getByText(/haz tu pedido/i).first()).toBeVisible();
+    await expect(page.getByText(/disfruta/i).first()).toBeVisible();
   });
 
   test("renders the menu preview section", async ({ page }) => {
@@ -84,7 +84,7 @@ test.describe("Landing Page", () => {
     await expect(whyUs).toBeVisible();
 
     // Should mention at least one feature
-    await expect(page.getByText(/ingredientes frescos/i)).toBeVisible();
+    await expect(page.getByText(/ingredientes frescos/i).first()).toBeVisible();
   });
 
   test("renders the final CTA section", async ({ page }) => {
@@ -100,7 +100,7 @@ test.describe("Landing Page", () => {
     await expect(finalCta).toBeVisible();
 
     // There should be a link/button to the menu (actual text: "Ver Menú")
-    const menuLink = page.getByRole("link", { name: /ver menú/i });
+    const menuLink = page.getByRole("link", { name: /ver menú/i }).first();
     await expect(menuLink).toBeVisible();
   });
 
@@ -111,7 +111,7 @@ test.describe("Landing Page", () => {
     await expect(footer).toBeVisible();
 
     // Should mention Litus Taste
-    await expect(footer.getByText(/litus taste/i)).toBeVisible();
+    await expect(footer.getByText(/litus taste/i).first()).toBeVisible();
   });
 
   test("has a working navigation header", async ({ page }) => {
@@ -134,15 +134,14 @@ test.describe("Landing Page", () => {
       await page.waitForLoadState("networkidle");
 
       // Hero heading should be visible
+      // Actual h1 text: "Tu comida de la semana, preparada con amor"
       await expect(
-        page.getByRole("heading", { name: /comida preparada/i, level: 1 })
+        page.getByRole("heading", { name: /tu comida de la semana/i, level: 1 })
       ).toBeVisible();
 
       // Mobile menu button should be visible
-      const mobileMenuButton = page.getByRole("button", { name: /menú/i });
-      // OR the hamburger button
       const hamburgerButton = page.locator("button").filter({ has: page.locator("svg") }).first();
-      await expect(hamburgerButton.or(mobileMenuButton)).toBeVisible();
+      await expect(hamburgerButton).toBeVisible();
     });
   });
 });

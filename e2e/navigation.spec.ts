@@ -20,8 +20,8 @@ test.describe("Site Navigation", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    // Find the CTA button/link
-    const ctaLink = page.getByRole("link", { name: /ver men/i });
+    // Find the CTA button/link (use first to avoid strict mode with multiple "Ver Menú" links)
+    const ctaLink = page.getByRole("link", { name: /ver men/i }).first();
     await ctaLink.click();
     await expect(page).toHaveURL(/\/menu/);
   });
