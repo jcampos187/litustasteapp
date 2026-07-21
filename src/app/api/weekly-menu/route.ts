@@ -36,9 +36,9 @@ export async function POST(request: Request) {
       .insert(weeklyMenus)
       .values({
         label: label || `Menú Semanal`,
-        weekStart: weekStart ? new Date(weekStart) : new Date(),
+        weekStart: weekStart ? new Date(weekStart + "T00:00:00") : new Date(),
         weekEnd: weekEnd
-          ? new Date(weekEnd)
+          ? new Date(weekEnd + "T00:00:00")
           : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         orderCutoff: orderCutoff ? new Date(orderCutoff) : null,
         publishAt: publishAt ? new Date(publishAt) : null,
@@ -95,8 +95,8 @@ export async function PUT(request: Request) {
       .update(weeklyMenus)
       .set({
         label,
-        weekStart: weekStart ? new Date(weekStart) : undefined,
-        weekEnd: weekEnd ? new Date(weekEnd) : undefined,
+        weekStart: weekStart ? new Date(weekStart + "T00:00:00") : undefined,
+        weekEnd: weekEnd ? new Date(weekEnd + "T00:00:00") : undefined,
         orderCutoff: orderCutoff ? new Date(orderCutoff) : null,
         publishAt: publishAt ? new Date(publishAt) : null,
         isPublished: publish || undefined,

@@ -73,16 +73,107 @@ export default function AdminSidebar({ userName, userEmail }: AdminSidebarProps)
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const sidebarContent = (
+  return (
+    <>
+      {/* Mobile hamburger toggle — fixed button in the content area */}
+      <button
+        onClick={() => setMobileOpen(!mobileOpen)}
+        className="fixed left-3 top-[5.5rem] z-50 flex h-9 w-9 items-center justify-center rounded-xl bg-gray-800 text-gray-300 shadow-lg ring-1 ring-white/10 transition-all hover:bg-gray-700 hover:text-white lg:hidden"
+        aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+        aria-expanded={mobileOpen}
+      >
+        {mobileOpen ? (
+          <X className="h-4 w-4" />
+        ) : (
+          <Menu className="h-4 w-4" />
+        )}
+      </button>
+
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm lg:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Mobile sidebar — fixed overlay sliding from left, dark theme */}
+      <aside
+        aria-hidden={!mobileOpen}
+        className={cn(
+          "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-white/10 bg-gray-900 shadow-2xl shadow-black/30 transition-transform duration-300 lg:hidden",
+          collapsed ? "w-16" : "w-64",
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
+        <SidebarContent
+          pathname={pathname}
+          collapsed={collapsed}
+          setCollapsed={setCollapsed}
+          userName={userName}
+          userEmail={userEmail}
+          dark
+          onNavClick={() => setMobileOpen(false)}
+        />
+      </aside>
+
+      {/* Desktop sidebar — normal flex flow, light theme */}
+      <aside
+        className={cn(
+          "hidden flex-col border-r border-lt-cream-dark bg-white transition-all duration-300 lg:flex",
+          collapsed ? "w-16" : "w-64"
+        )}
+      >
+        <SidebarContent
+          pathname={pathname}
+          collapsed={collapsed}
+          setCollapsed={setCollapsed}
+          userName={userName}
+          userEmail={userEmail}
+          dark={false}
+        />
+      </aside>
+    </>
+  );
+}
+
+interface SidebarContentProps {
+  pathname: string;
+  collapsed: boolean;
+  setCollapsed: (v: boolean) => void;
+  userName: string;
+  userEmail: string;
+  dark: boolean;
+  onNavClick?: () => void;
+}
+
+function SidebarContent({
+  pathname,
+  collapsed,
+  setCollapsed,
+  userName,
+  userEmail,
+  dark,
+  onNavClick,
+}: SidebarContentProps) {
+  const t = (light: string, darkAlt: string) => (dark ? darkAlt : light);
+
+  return (
     <>
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-lt-cream-dark px-4 py-4">
+      <div className={cn(
+        "flex items-center justify-between border-b px-4 py-4",
+        t("border-lt-cream-dark", "border-white/10")
+      )}>
         {!collapsed && (
           <div className="flex items-center gap-2">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-lt-terracotta to-lt-gold text-xs font-bold text-white">
               LT
             </span>
-            <span className="text-sm font-bold text-lt-warm-brown">Admin</span>
+            <span className={cn(
+              "text-sm font-bold",
+              t("text-lt-warm-brown", "text-gray-100")
+            )}>Admin</span>
           </div>
         )}
         {collapsed && (
@@ -93,7 +184,11 @@ export default function AdminSidebar({ userName, userEmail }: AdminSidebarProps)
         <button
           onClick={() => setCollapsed(!collapsed)}
           className={cn(
-            "flex h-7 w-7 items-center justify-center rounded-lg text-lt-charcoal/40 transition-colors hover:bg-gray-100 hover:text-lt-charcoal",
+            "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
+            t(
+              "text-lt-charcoal/40 hover:bg-gray-100 hover:text-lt-charcoal",
+              "text-gray-500 hover:bg-white/10 hover:text-gray-300"
+            ),
             collapsed && "mx-auto mt-2"
           )}
         >
@@ -110,12 +205,18 @@ export default function AdminSidebar({ userName, userEmail }: AdminSidebarProps)
             <Link
               key={item.href}
               href={item.href}
-              onClick={() => setMobileOpen(false)} // close mobile sidebar on nav
+              onClick={onNavClick}
               className={cn(
                 "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
                 isActive
-                  ? "bg-lt-terracotta/10 text-lt-terracotta"
-                  : "text-lt-charcoal/60 hover:bg-gray-100 hover:text-lt-charcoal",
+                  ? t(
+                      "bg-lt-terracotta/10 text-lt-terracotta",
+                      "bg-lt-terracotta/20 text-lt-terracotta-light"
+                    )
+                  : t(
+                      "text-lt-charcoal/60 hover:bg-gray-100 hover:text-lt-charcoal",
+                      "text-gray-400 hover:bg-white/10 hover:text-gray-200"
+                    ),
                 collapsed && "justify-center px-2"
               )}
               title={collapsed ? item.label : undefined}
@@ -128,19 +229,28 @@ export default function AdminSidebar({ userName, userEmail }: AdminSidebarProps)
       </nav>
 
       {/* User info */}
-      <div className={cn("border-t border-lt-cream-dark p-4", collapsed && "px-2 py-4")}>
+      <div className={cn(
+        "border-t p-4",
+        t("border-lt-cream-dark", "border-white/10"),
+        collapsed && "px-2 py-4"
+      )}>
         {!collapsed && (
           <div className="mb-3">
-            <p className="truncate text-sm font-medium text-lt-charcoal">
-              {userName}
-            </p>
-            <p className="truncate text-xs text-lt-charcoal/40">{userEmail}</p>
+            <p className={cn(
+              "truncate text-sm font-medium",
+              t("text-lt-charcoal", "text-gray-200")
+            )}>{userName}</p>
+            <p className={cn(
+              "truncate text-xs",
+              t("text-lt-charcoal/40", "text-gray-500")
+            )}>{userEmail}</p>
           </div>
         )}
         <SignOutButton>
           <button
             className={cn(
-              "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 transition-all hover:bg-red-50",
+              "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 transition-all",
+              t("hover:bg-red-50", "hover:bg-red-500/10"),
               collapsed && "justify-center px-2"
             )}
             title="Cerrar Sesión"
@@ -150,54 +260,6 @@ export default function AdminSidebar({ userName, userEmail }: AdminSidebarProps)
           </button>
         </SignOutButton>
       </div>
-    </>
-  );
-
-  return (
-    <>
-      {/* Mobile hamburger toggle — fixed button in the content area */}
-      <button
-        onClick={() => setMobileOpen(!mobileOpen)}
-        className="fixed left-3 top-[5.5rem] z-50 flex h-9 w-9 items-center justify-center rounded-xl bg-white shadow-md ring-1 ring-black/5 transition-all hover:shadow-lg lg:hidden"
-        aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
-        aria-expanded={mobileOpen}
-      >
-        {mobileOpen ? (
-          <X className="h-4 w-4 text-lt-charcoal/70" />
-        ) : (
-          <Menu className="h-4 w-4 text-lt-charcoal/70" />
-        )}
-      </button>
-
-      {/* Mobile backdrop */}
-      {mobileOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
-
-      {/* Mobile sidebar — fixed overlay sliding from left */}
-      <aside
-        aria-hidden={!mobileOpen}
-        className={cn(
-          "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-lt-cream-dark bg-white shadow-2xl transition-transform duration-300 lg:hidden",
-          collapsed ? "w-16" : "w-64",
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
-        {sidebarContent}
-      </aside>
-
-      {/* Desktop sidebar — normal flex flow */}
-      <aside
-        className={cn(
-          "hidden flex-col border-r border-lt-cream-dark bg-white transition-all duration-300 lg:flex",
-          collapsed ? "w-16" : "w-64"
-        )}
-      >
-        {sidebarContent}
-      </aside>
     </>
   );
 }
