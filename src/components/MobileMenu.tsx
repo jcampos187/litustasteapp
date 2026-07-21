@@ -16,6 +16,7 @@ export default function MobileMenu({ isAdmin = false }: MobileMenuProps) {
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
   // Close on route change (intentional: close menu on every navigation)
@@ -24,10 +25,13 @@ export default function MobileMenu({ isAdmin = false }: MobileMenuProps) {
     setIsOpen(false);
   }, [pathname]);
 
-  // Close on click outside
+  // Close on click outside — checks BOTH hamburger div AND portal panel
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const isInsideMenu = menuRef.current?.contains(target);
+      const isInsidePanel = panelRef.current?.contains(target);
+      if (!isInsideMenu && !isInsidePanel) {
         setIsOpen(false);
       }
     }
@@ -76,6 +80,7 @@ export default function MobileMenu({ isAdmin = false }: MobileMenuProps) {
 
           {/* Sliding menu panel — always mounted, toggled via translate class */}
           <div
+            ref={panelRef}
             className={`fixed right-0 top-0 z-[110] flex h-full w-[300px] max-w-[85vw] flex-col bg-gradient-to-b from-lt-dark-light via-lt-dark to-lt-dark shadow-2xl shadow-black/60 transition-transform duration-300 ease-out ${
               isOpen ? "translate-x-0" : "translate-x-full"
             }`}
