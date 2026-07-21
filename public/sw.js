@@ -12,6 +12,8 @@ self.addEventListener("install", (event) => {
         "/",
         "/manifest.json",
         "/icon.svg",
+        "/icon-192.png",
+        "/icon-512.png",
       ]);
     }).catch(() => {
       // Non-fatal: pre-cache may fail if offline during install
