@@ -18,7 +18,8 @@
     "prepare": "husky || true",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "generate-icons": "npx tsx scripts/generate-icons.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.5.12",
