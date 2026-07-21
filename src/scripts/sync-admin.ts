@@ -3,6 +3,7 @@ import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { eq } from "drizzle-orm";
 import * as schema from "../db/schema";
+import { clerkClient } from "@clerk/nextjs/server";
 import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
@@ -44,6 +45,18 @@ async function main() {
       role: "admin",
     });
     console.log("✅ Admin user created");
+  }
+
+  // Verify
+  // Sync role to Clerk public metadata for edge-level middleware checks
+  try {
+    const client = await clerkClient();
+    await client.users.updateUser(clerkId, {
+      publicMetadata: { role: "admin" },
+    });
+    console.log("✅ Clerk public metadata synced");
+  } catch (e) {
+    console.error("⚠️ Failed to sync role to Clerk metadata (non-fatal):", e);
   }
 
   // Verify
