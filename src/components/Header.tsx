@@ -47,7 +47,7 @@ export default async function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
           <img
-            src="/logo.png"
+            src="/logo.webp"
             alt="Litus Taste"
             className="h-10 w-10 rounded-xl object-contain"
           />

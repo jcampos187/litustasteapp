@@ -6,7 +6,7 @@ import { eq, and, desc } from "drizzle-orm";
 import ScrollReveal from "@/components/ScrollReveal";
 import MenuPreviewList from "@/components/MenuPreviewList";
 import CartSummary from "@/components/CartSummary";
-import HeroCarousel from "@/components/HeroCarousel";
+
 
 async function getActiveMenu() {
   try {
@@ -151,9 +151,27 @@ export default async function Home() {
             </div>
           </div>
 
-          {/* Right: Hero Carousel — dish photo slideshow */}
+          {/* Right: Large brand logo display */}
           <div className="mt-12 w-full max-w-md flex-1 lg:mt-0 lg:flex lg:justify-end lg:pl-16 lg:max-w-none">
-            <HeroCarousel />
+            <div className="animate-fade-in-up flex flex-col items-center gap-4" style={{ animationDelay: "0.2s" }}>
+              <div className="lt-hero-frame">
+                <div className="lt-img-shine relative flex h-[220px] w-[220px] items-center justify-center overflow-hidden rounded-[18px] bg-gradient-to-br from-lt-green-pale/20 to-lt-amber/10 shadow-2xl shadow-lt-green/15 sm:h-[260px] sm:w-[260px] lg:h-[300px] lg:w-[300px]">
+                  <img
+                    src="/logo.webp"
+                    alt="Litus Taste"
+                    className="h-24 w-24 object-contain sm:h-28 sm:w-28 lg:h-36 lg:w-36"
+                  />
+                </div>
+              </div>
+              <div className="text-center">
+                <span className="font-[family-name:var(--font-display)] text-2xl font-semibold text-lt-warm-brown sm:text-3xl lg:text-4xl">
+                  Litus <span className="lt-gradient-text">Taste</span>
+                </span>
+                <p className="mt-1 text-xs font-medium uppercase tracking-[0.15em] text-lt-olive sm:text-sm">
+                  Comida Preparada
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
