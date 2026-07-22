@@ -152,14 +152,14 @@ export default async function Home() {
           </div>
 
           {/* Right: Large brand logo display */}
-          <div className="mt-12 w-full max-w-md flex-1 lg:mt-0 lg:flex lg:justify-end lg:pl-16 lg:max-w-none">
-            <div className="animate-fade-in-up flex flex-col items-center gap-4" style={{ animationDelay: "0.2s" }}>
+          <div className="mt-12 w-full flex-1 lg:mt-0 lg:flex lg:items-center lg:justify-center lg:max-w-none">
+            <div className="animate-fade-in-up flex flex-col items-center gap-5" style={{ animationDelay: "0.2s" }}>
               <div className="lt-hero-frame">
-                <div className="lt-img-shine relative flex h-[220px] w-[220px] items-center justify-center overflow-hidden rounded-[18px] bg-gradient-to-br from-lt-green-pale/20 to-lt-amber/10 shadow-2xl shadow-lt-green/15 sm:h-[260px] sm:w-[260px] lg:h-[300px] lg:w-[300px]">
+                <div className="lt-img-shine relative flex h-[240px] w-[240px] items-center justify-center overflow-hidden rounded-[18px] bg-gradient-to-br from-lt-green-pale/20 to-lt-amber/10 shadow-2xl shadow-lt-green/15 sm:h-[300px] sm:w-[300px] lg:h-[380px] lg:w-[380px]">
                   <img
                     src="/logo.webp"
                     alt="Litus Taste"
-                    className="h-24 w-24 object-contain sm:h-28 sm:w-28 lg:h-36 lg:w-36"
+                    className="h-32 w-32 object-contain sm:h-36 sm:w-36 lg:h-48 lg:w-48"
                   />
                 </div>
               </div>
