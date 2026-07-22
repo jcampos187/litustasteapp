@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 
@@ -19,6 +19,8 @@ const slides = [
   "/1e967c85-5b37-422d-b11a-6735b2b35ed0.webp",
 ];
 
+const AUTOPLAY_INTERVAL = 5000;
+
 export default function HeroCarousel() {
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -29,16 +31,16 @@ export default function HeroCarousel() {
 
   const totalSlides = slides.length;
 
-  const goTo = (index: number) => {
+  const goTo = useCallback((index: number) => {
     setCurrent((index + totalSlides) % totalSlides);
-  };
+  }, [totalSlides]);
 
   /* ── Auto-play ────────────────────────────────────────────── */
   useEffect(() => {
     if (isPaused || isHovered) return;
     intervalRef.current = setInterval(() => {
       setCurrent((prev) => (prev + 1) % totalSlides);
-    }, 4500);
+    }, AUTOPLAY_INTERVAL);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
@@ -52,111 +54,152 @@ export default function HeroCarousel() {
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, []);
+  }, [goTo]);
 
   return (
-    <div
-      className="animate-fade-in-up relative w-full"
-      style={{ animationDelay: "0.2s" }}
-    >
-      {/* ── Card frame ─────────────────────────────────────── */}
+    <div className="animate-fade-in-up relative mx-auto w-full max-w-lg" style={{ animationDelay: "0.2s" }}>
+      {/* ── Floating polaroid-style frame ─────────────────────── */}
       <div
-        className="lt-hero-frame group relative aspect-square h-auto w-full overflow-hidden rounded-[20px] shadow-[0_8px_40px_-12px_rgba(0,0,0,0.25),_0_0_0_1px_rgba(0,0,0,0.04)] transition-shadow duration-500 hover:shadow-[0_12px_56px_-16px_rgba(0,0,0,0.35),_0_0_0_1px_rgba(0,0,0,0.06)]"
+        className="group relative"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* ── Slides ─────────────────────────────────────────── */}
-        <div className="absolute inset-0 overflow-hidden rounded-[20px]">
+        {/* ── Main image card ──────────────────────────────────── */}
+        <div
+          className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl
+                     shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3),_0_0_0_1px_rgba(255,255,255,0.08)]
+                     ring-1 ring-white/10
+                     transition-all duration-500
+                     group-hover:shadow-[0_28px_80px_-20px_rgba(0,0,0,0.4),_0_0_0_1px_rgba(255,255,255,0.12)]
+                     group-hover:-translate-y-1"
+        >
+          {/* Slides with Ken Burns CSS animation */}
+          <div className="absolute inset-0 overflow-hidden rounded-2xl">
+            {slides.map((src, i) => (
+              <div
+                key={src}
+                className={`absolute inset-0 transition-opacity duration-[900ms] ease-out ${
+                  i === current ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                <div
+                  className={`relative h-full w-full ${
+                    i === current ? "animate-ken-burns" : "scale-100"
+                  }`}
+                >
+                  <Image
+                    src={src}
+                    alt={`Platillo ${i + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 520px"
+                    priority={i < 2}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Gradient overlays ──────────────────────────────── */}
+          <div className="pointer-events-none absolute inset-0 z-[2] rounded-2xl bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-20 bg-gradient-to-b from-black/20 to-transparent" />
+
+          {/* ── Top badge: glassmorphism category pill ──────────── */}
+          <div className="absolute left-4 top-4 z-[5]">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1.5 text-[0.65rem] font-semibold tracking-wider text-white/90 shadow-sm backdrop-blur-md">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-lt-green" />
+              {String(current + 1).padStart(2, "0")} / {String(totalSlides).padStart(2, "0")}
+            </span>
+          </div>
+
+          {/* ── Previous / Next buttons ─────────────────────────── */}
+          <div
+            className={`absolute inset-x-0 top-1/2 z-[5] flex -translate-y-1/2 justify-between px-2 transition-all duration-300 ${
+              isHovered ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <button
+              onClick={() => goTo(currentRef.current - 1)}
+              aria-label="Anterior"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-lt-charcoal shadow-lg shadow-black/15 backdrop-blur-md transition-all duration-200 hover:bg-white hover:text-lt-terracotta hover:shadow-xl hover:-translate-x-0.5 active:scale-90"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => goTo(currentRef.current + 1)}
+              aria-label="Siguiente"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-lt-charcoal shadow-lg shadow-black/15 backdrop-blur-md transition-all duration-200 hover:bg-white hover:text-lt-terracotta hover:shadow-xl hover:translate-x-0.5 active:scale-90"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* ── Bottom controls: pause/play ────────────────────── */}
+          <div className="absolute bottom-4 left-1/2 z-[5] -translate-x-1/2">
+            <button
+              onClick={() => setIsPaused((p) => !p)}
+              aria-label={isPaused ? "Reanudar" : "Pausar"}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white/70 backdrop-blur-sm transition-all hover:bg-white/30 hover:text-white active:scale-90"
+            >
+              {isPaused ? (
+                <Play className="h-3.5 w-3.5" />
+              ) : (
+                <Pause className="h-3.5 w-3.5" />
+              )}
+            </button>
+          </div>
+
+          {/* ── Decorative frame glow ─────────────────────────── */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -inset-3 -z-10 rounded-[28px] border border-lt-green/5 bg-gradient-to-b from-white/30 to-transparent opacity-0 backdrop-blur-[2px] transition-all duration-500 group-hover:opacity-100"
+          />
+        </div>
+      </div>
+
+      {/* ── Thumbnail strip ────────────────────────────────────── */}
+      <div className="mt-4 flex items-center justify-center gap-2 px-2">
+        <button
+          onClick={() => goTo(currentRef.current - 1)}
+          aria-label="Anterior"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/80 text-lt-charcoal/50 shadow-sm backdrop-blur-sm transition-all hover:bg-white hover:text-lt-terracotta active:scale-90"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+
+        <div className="scrollbar-none flex items-center gap-2 overflow-x-auto snap-x snap-mandatory py-1">
           {slides.map((src, i) => (
-            <div
+            <button
               key={src}
-              className={`absolute inset-0 transition-all duration-700 ease-out ${
+              onClick={() => goTo(i)}
+              aria-label={`Ir a imagen ${i + 1}`}
+              className={`snap-start relative shrink-0 overflow-hidden rounded-xl transition-all duration-300 ${
                 i === current
-                  ? "scale-100 opacity-100 blur-0"
-                  : i === (current - 1 + totalSlides) % totalSlides
-                    ? "scale-[1.02] opacity-0 blur-[2px]"
-                    : "scale-[1.04] opacity-0 blur-[4px]"
+                  ? "h-14 w-14 scale-110 ring-2 ring-lt-terracotta ring-offset-2 ring-offset-white shadow-md"
+                  : "h-12 w-12 opacity-60 hover:opacity-90 hover:scale-105"
               }`}
             >
               <Image
                 src={src}
-                alt={`Platillo ${i + 1}`}
+                alt=""
                 fill
                 className="object-cover"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 520px"
-                priority={i < 2}
+                sizes="56px"
               />
-            </div>
+              {i === current && (
+                <div className="absolute inset-0 bg-lt-terracotta/10" />
+              )}
+            </button>
           ))}
         </div>
 
-        {/* ── Gradient overlays ──────────────────────────────── */}
-        <div className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-tr from-black/10 via-transparent to-amber-900/10" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-2/5 bg-gradient-to-t from-black/40 via-black/15 to-transparent" />
-
-        {/* ── Previous / Next buttons ─────────────────────────── */}
-        <div
-          className={`absolute inset-x-0 top-1/2 z-[5] flex -translate-y-1/2 justify-between px-3 transition-all duration-300 ${
-            isHovered ? "opacity-100" : "opacity-0"
-          }`}
+        <button
+          onClick={() => goTo(currentRef.current + 1)}
+          aria-label="Siguiente"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/80 text-lt-charcoal/50 shadow-sm backdrop-blur-sm transition-all hover:bg-white hover:text-lt-terracotta active:scale-90"
         >
-          <button
-            onClick={() => goTo(currentRef.current - 1)}
-            aria-label="Anterior"
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-white/85 text-lt-charcoal shadow-lg shadow-black/10 backdrop-blur-md transition-all duration-200 hover:bg-white hover:text-lt-terracotta hover:shadow-xl active:scale-90"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button
-            onClick={() => goTo(currentRef.current + 1)}
-            aria-label="Siguiente"
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-white/85 text-lt-charcoal shadow-lg shadow-black/10 backdrop-blur-md transition-all duration-200 hover:bg-white hover:text-lt-terracotta hover:shadow-xl active:scale-90"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        </div>
-
-        {/* ── Bottom bar: dots + pause toggle ────────────────── */}
-        <div className="absolute inset-x-0 bottom-0 z-[5] flex items-center justify-center gap-3 px-5 pb-5">
-          {/* Dot indicators */}
-          <div className="flex items-center gap-1.5">
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => goTo(i)}
-                aria-label={`Ir a imagen ${i + 1}`}
-                className={`rounded-full transition-all duration-500 ${
-                  i === current
-                    ? "w-7 bg-white shadow-md"
-                    : "w-1.5 bg-white/40 hover:bg-white/70"
-                } h-1.5`}
-              />
-            ))}
-          </div>
-
-          {/* Pause / Play toggle */}
-          <button
-            onClick={() => setIsPaused((p) => !p)}
-            aria-label={isPaused ? "Reanudar" : "Pausar"}
-            className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-white/60 backdrop-blur-sm transition-all hover:bg-white/30 hover:text-white"
-          >
-            {isPaused ? (
-              <Play className="h-3 w-3" />
-            ) : (
-              <Pause className="h-3 w-3" />
-            )}
-          </button>
-        </div>
-
-        {/* ── Counter badge (top-left) ─────────────────────────── */}
-        <div className="absolute left-4 top-4 z-[5] rounded-full bg-black/30 px-2.5 py-1 text-[0.625rem] font-medium tracking-wider text-white/70 backdrop-blur-sm">
-          {String(current + 1).padStart(2, "0")} / {String(totalSlides).padStart(2, "0")}
-        </div>
-        {/* ── Decorative frame glow (inside group for hover) ── */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -inset-3 -z-10 rounded-[28px] border border-lt-green/5 bg-gradient-to-b from-white/30 to-transparent opacity-0 backdrop-blur-[2px] transition-all duration-500 group-hover:opacity-100"
-        />
+          <ChevronRight className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );
