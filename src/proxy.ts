@@ -14,14 +14,17 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 const authMiddleware = clerkMiddleware(async (auth, req) => {
+  // Always call auth() to hydrate the auth context — this is essential
+  // for OAuth logins (Google, etc.) where the session cookie needs to be
+  // verified on the server side so that downstream auth() calls in server
+  // components return the correct userId.
+  const { userId } = await auth();
+
   // Protect non-public routes from unauthenticated users
-  if (!isPublicRoute(req)) {
-    const { userId } = await auth();
-    if (!userId) {
-      const signInUrl = new URL("/auth/sign-in", req.url);
-      signInUrl.searchParams.set("redirect_url", req.nextUrl.pathname);
-      return NextResponse.redirect(signInUrl);
-    }
+  if (!isPublicRoute(req) && !userId) {
+    const signInUrl = new URL("/auth/sign-in", req.url);
+    signInUrl.searchParams.set("redirect_url", req.nextUrl.pathname);
+    return NextResponse.redirect(signInUrl);
   }
 });
 
