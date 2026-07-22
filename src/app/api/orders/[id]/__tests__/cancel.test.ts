@@ -9,23 +9,41 @@ vi.mock("@clerk/nextjs/server", () => ({
 // ── Mock Drizzle DB ────────────────────────────────────────────
 const mockDbSelect = vi.fn();
 const mockDbUpdate = vi.fn();
+const mockDbDelete = vi.fn().mockReturnValue({});
 
 vi.mock("@/db", () => ({
   db: {
     select: () => mockDbSelect(),
     update: () => mockDbUpdate(),
+    delete: () => mockDbDelete(),
   },
+}));
+
+// ── Mock email module (cancel route imports email.ts) ───────────
+vi.mock("@/lib/email", () => ({
+  sendOrderCancelledEmail: vi.fn().mockResolvedValue(undefined),
+}));
+
+// ── Mock WhatsApp module ───────────────────────────────────────
+vi.mock("@/lib/whatsapp", () => ({
+  sendOrderCancelledWhatsApp: vi.fn().mockResolvedValue(undefined),
 }));
 
 /**
  * Sets up the mock chain for the cancel route's DB queries.
- * The route makes two select queries (user lookup, order lookup)
- * and one update query.
+ * The route makes:
+ *   - 2 select queries (user lookup, order lookup)
+ *   - 1 update query
+ *   - 1 select query (order items, no .limit())
+ * Some tests return early before all queries are reached.
  */
 function setupMockChain() {
   // select() → .from() → .where() → .limit()
+  // For queries WITHOUT .limit(), we return an empty array (supports .map())
   const limitFn = vi.fn();
-  const selectWhereFn = vi.fn().mockReturnValue({ limit: limitFn });
+  const selectWhereFn = vi.fn().mockReturnValue(
+    Object.assign([], { limit: limitFn })
+  );
   const fromFn = vi.fn().mockReturnValue({ where: selectWhereFn });
   mockDbSelect.mockReturnValue({ from: fromFn });
 
@@ -212,6 +230,8 @@ describe("Cancel Order API", () => {
       returningFn.mockResolvedValueOnce([
         { id: "order-123", customerId: "db-user-123", status: "cancelled" },
       ]);
+      // Order items query (no .limit()) — the mock returns an empty array by default,
+      // which is fine since the notification modules are mocked
 
 
       const request = new Request("http://localhost:3000/api/orders/order-123/cancel", {

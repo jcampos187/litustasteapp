@@ -105,6 +105,78 @@ export async function sendOrderWhatsApp(
 }
 
 /**
+ * Send a cancellation notification to the admin via WhatsApp.
+ */
+export async function sendOrderCancelledWhatsApp(
+  customerName: string,
+  items: Array<{ mealName: string; quantity: number; unitPrice: string }>,
+  customerPhone?: string | null
+): Promise<void> {
+  const total = items.reduce(
+    (sum, i) => sum + Number(i.unitPrice) * i.quantity,
+    0
+  );
+
+  const itemLines = items
+    .map((i) => `• ${i.quantity}x ${i.mealName}`)
+    .join("\n");
+
+  const messageBody = [
+    `❌ *Pedido Cancelado — ${customerName}*`,
+    ``,
+    `${itemLines}`,
+    ``,
+    `*Total:* ₡${total.toLocaleString()}`,
+    customerPhone ? `📞 ${customerPhone}` : "",
+    ``,
+    `📋 ${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/admin/orders`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  await sendWhatsAppText(messageBody);
+}
+
+/**
+ * Send a notification to the admin when an order status changes.
+ */
+export async function sendOrderStatusChangedWhatsApp(
+  customerName: string,
+  orderId: string,
+  newStatus: string
+): Promise<void> {
+  const statusEmoji: Record<string, string> = {
+    recibido: "✅",
+    completed: "🍽️",
+    pending: "⏳",
+    cancelled: "❌",
+  };
+
+  const statusLabels: Record<string, string> = {
+    pending: "Pendiente",
+    recibido: "Recibido",
+    completed: "Completado",
+    cancelled: "Cancelado",
+  };
+
+  const emoji = statusEmoji[newStatus] || "📋";
+  const label = statusLabels[newStatus] || newStatus;
+
+  const messageBody = [
+    `${emoji} *Estado de Pedido Actualizado*`,
+    ``,
+    `*Cliente:* ${customerName}`,
+    `*Estado:* ${label}`,
+    ``,
+    `📋 ${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/admin/orders/${orderId}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  await sendWhatsAppText(messageBody);
+}
+
+/**
  * Send a new registration notification to the admin via WhatsApp.
  */
 export async function sendNewRegistrationWhatsApp(

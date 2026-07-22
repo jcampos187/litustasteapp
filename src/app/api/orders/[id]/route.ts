@@ -1,9 +1,11 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { orders, users } from "@/db/schema";
+import { orders, users, pushSubscriptions } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { sendOrderReceivedEmail, sendOrderCompletedEmail } from "@/lib/email";
+import { sendOrderStatusChangedWhatsApp } from "@/lib/whatsapp";
+import { sendPushNotificationToAll } from "@/lib/push";
 
 /**
  * When sending emails to customers (order received, completed) the system
@@ -13,6 +15,8 @@ import { sendOrderReceivedEmail, sendOrderCompletedEmail } from "@/lib/email";
  * sender). Until a custom domain (e.g., litustaste.com) is verified, Resend's
  * free tier only delivers to the verified admin email. See:
  *   https://resend.com/domains
+ *
+ * When order status changes, the admin also receives a WhatsApp notification.
  */
 
 export async function PATCH(
@@ -62,7 +66,7 @@ export async function PATCH(
       .where(eq(orders.id, id))
       .returning();
 
-    // Get customer info for email notifications
+    // Get customer info for notifications
     const [orderWithCustomer] = await db
       .select({
         customerEmail: users.email,
@@ -76,7 +80,7 @@ export async function PATCH(
     const customerName = orderWithCustomer?.customerName || "Cliente";
     const customerEmail = orderWithCustomer?.customerEmail;
 
-    // Send email notifications directly to the customer.
+    // ── Send email notifications to the customer ────────────────
     // Until a custom domain is verified in Resend, emails will only deliver
     // to the admin's verified address (ADMIN_EMAIL).
     if (customerEmail) {
@@ -91,6 +95,51 @@ export async function PATCH(
       } catch (e) {
         console.error("Failed to send notification email:", e);
       }
+    }
+
+    // ── Send WhatsApp notification to the admin ─────────────────
+    if (status === "recibido" || status === "completed") {
+      sendOrderStatusChangedWhatsApp(customerName, id, status).catch(console.error);
+    }
+
+    // ── Send push notification to the customer ──────────────────
+    if ((status === "recibido" || status === "completed") && customerEmail) {
+      // Use the order's customerId directly to find push subscriptions
+      sendPushNotificationToAll(
+        await db
+          .select({
+            id: pushSubscriptions.id,
+            endpoint: pushSubscriptions.endpoint,
+            p256dh: pushSubscriptions.p256dh,
+            auth: pushSubscriptions.auth,
+          })
+          .from(pushSubscriptions)
+          .where(eq(pushSubscriptions.userId, updated.customerId)),
+        status === "recibido"
+          ? {
+              title: "✅ ¡Pedido Recibido!",
+              body: `Hemos recibido tu pedido correctamente, ${customerName}.`,
+              url: `/account/orders/${id}`,
+            }
+          : {
+              title: "🍽️ ¡Pedido Completado!",
+              body: `Tu pedido está listo, ${customerName}. ¡Buen provecho!`,
+              url: `/account/orders/${id}`,
+            }
+      )
+        .then((expiredIds) => {
+          // Clean up expired subscriptions
+          if (expiredIds.length > 0) {
+            return Promise.all(
+              expiredIds.map((expiredId) =>
+                db
+                  .delete(pushSubscriptions)
+                  .where(eq(pushSubscriptions.id, expiredId))
+              )
+            );
+          }
+        })
+        .catch(console.error);
     }
 
     return NextResponse.json(updated);

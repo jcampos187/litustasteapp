@@ -1,11 +1,14 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { orders, users } from "@/db/schema";
+import { orders, orderItems, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { sendOrderCancelledEmail } from "@/lib/email";
+import { sendOrderCancelledWhatsApp } from "@/lib/whatsapp";
 
 /**
  * Customer cancels their own order — only allowed when status is "pending".
+ * Sends notifications to both the admin and the customer.
  */
 export async function PATCH(
   _request: Request,
@@ -58,6 +61,34 @@ export async function PATCH(
       .set({ status: "cancelled", updatedAt: new Date() })
       .where(eq(orders.id, id))
       .returning();
+
+    // ── Send cancellation notifications ─────────────────────────
+    // Fetch order items for the notification
+    const items = await db
+      .select()
+      .from(orderItems)
+      .where(eq(orderItems.orderId, id));
+
+    const itemsForNotification = items.map((i) => ({
+      mealName: i.mealName,
+      quantity: i.quantity,
+      unitPrice: i.unitPrice,
+    }));
+
+    // Email: both admin + customer
+    sendOrderCancelledEmail(
+      dbUser.email,
+      dbUser.name || dbUser.email,
+      id,
+      itemsForNotification
+    ).catch(console.error);
+
+    // WhatsApp: admin
+    sendOrderCancelledWhatsApp(
+      dbUser.name || dbUser.email,
+      itemsForNotification,
+      dbUser.phone
+    ).catch(console.error);
 
     return NextResponse.json(updated);
   } catch {

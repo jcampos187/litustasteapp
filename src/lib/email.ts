@@ -261,6 +261,122 @@ export async function notifyUserApprovalStatus(
 }
 
 /**
+ * Send notifications when an order is cancelled by the customer.
+ * Notifies both the admin and sends a confirmation to the customer.
+ */
+export async function sendOrderCancelledEmail(
+  customerEmail: string,
+  customerName: string,
+  orderId: string,
+  items: Array<{ mealName: string; quantity: number; unitPrice: string }>
+) {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const total = items.reduce(
+    (sum, i) => sum + Number(i.unitPrice) * i.quantity,
+    0
+  );
+
+  const itemsList = items
+    .map((i) => `<tr><td>${i.quantity}x ${i.mealName}</td><td style="text-align: right;">₡${(Number(i.unitPrice) * i.quantity).toLocaleString()}</td></tr>`)
+    .join("");
+
+  // ── Admin notification ──
+  try {
+    await resend.emails.send({
+      from: fromEmail,
+      to: adminEmail,
+      subject: `❌ Pedido Cancelado — ${customerName}`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+          <div style="background: #DC2626; border-radius: 16px 16px 0 0; padding: 24px; color: white;">
+            <h1 style="font-size: 20px; margin: 0;">Pedido Cancelado ❌</h1>
+          </div>
+          <div style="background: #FFF8F0; padding: 24px;">
+            <div style="margin-bottom: 20px;">
+              <h3 style="color: #3D2B1F; font-size: 14px; margin: 0 0 8px;">Cliente</h3>
+              <p style="color: #666; font-size: 14px; margin: 0;">${customerName}</p>
+              <p style="color: #666; font-size: 12px; margin: 2px 0 0;">${customerEmail}</p>
+              <p style="color: #999; font-size: 12px; margin-top: 4px;">Pedido #${orderId.slice(0, 8)}</p>
+            </div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+              <thead>
+                <tr style="border-bottom: 1px solid #E8DCC8;">
+                  <th style="text-align: left; padding: 8px 0; color: #999;">Artículo</th>
+                  <th style="text-align: right; padding: 8px 0; color: #999;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsList}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td style="padding-top: 12px; font-weight: bold; color: #3D2B1F;">Total</td>
+                  <td style="padding-top: 12px; text-align: right; font-weight: bold; color: #DC2626;">
+                    ₡${total.toLocaleString()}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+            <div style="text-align: center; margin-top: 24px;">
+              <a href="${baseUrl}/admin/orders"
+                 style="display: inline-block; background: #DC2626; color: white;
+                        text-decoration: none; padding: 12px 24px; border-radius: 12px;
+                        font-weight: 600; font-size: 14px;">
+                Ver Pedidos
+              </a>
+            </div>
+          </div>
+        </div>
+      `,
+    });
+  } catch (error) {
+    console.error("Error sending cancellation admin email:", error);
+  }
+
+  // ── Customer confirmation ──
+  try {
+    await resend.emails.send({
+      from: fromEmail,
+      to: customerEmail,
+      subject: "Tu pedido ha sido cancelado",
+      html: `
+        <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+          <div style="text-align: center; padding: 24px 0;">
+            <h1 style="color: #D4764A; font-size: 24px; margin: 0;">Litus Taste</h1>
+            <p style="color: #6B8E3E; font-size: 14px;">Comida Preparada</p>
+          </div>
+          <div style="background: #FFF8F0; border-radius: 16px; padding: 32px;">
+            <div style="text-align: center; font-size: 48px; margin-bottom: 16px;">ℹ️</div>
+            <h2 style="color: #3D2B1F; font-size: 20px; margin: 0 0 12px; text-align: center;">
+              Pedido Cancelado, ${customerName}
+            </h2>
+            <p style="color: #666; line-height: 1.6; font-size: 14px; text-align: center;">
+              Tu pedido #${orderId.slice(0, 8)} ha sido cancelado correctamente.
+            </p>
+            <p style="color: #999; font-size: 13px; text-align: center; margin-top: 16px;">
+              Si deseas hacer un nuevo pedido, el menú semanal está disponible.
+            </p>
+            <div style="text-align: center; margin: 24px 0;">
+              <a href="${baseUrl}/menu"
+                 style="display: inline-block; background: #D4764A; color: white;
+                        text-decoration: none; padding: 14px 32px; border-radius: 12px;
+                        font-weight: 600; font-size: 14px;">
+                Ver Menú
+              </a>
+            </div>
+          </div>
+          <div style="text-align: center; padding: 16px; color: #999; font-size: 12px;">
+            <p>Litus Taste — Hecho en Costa Rica 🇨🇷</p>
+          </div>
+        </div>
+      `,
+    });
+  } catch (error) {
+    console.error("Error sending cancellation customer email:", error);
+  }
+}
+
+/**
  * Send an email to the customer when their order is marked as "Recibido".
  */
 export async function sendOrderReceivedEmail(
