@@ -76,36 +76,47 @@ export async function POST(request: Request) {
       const email = emailAddresses?.[0]?.email_address || "";
       const firstName = (data.first_name as string) || "";
       const lastName = (data.last_name as string) || "";
-      const name =
-        firstName && lastName
-          ? `${firstName} ${lastName}`
-          : firstName || email.split("@")[0];
       const avatarUrl = (data.image_url as string) || null;
 
-      // Check if user exists
-      const [existingUser] = await db
+      // Try to find user by clerkId first, then fall back to email
+      // This handles the case where a user signs in with Google OAuth
+      // using the same email as their existing email/password account.
+      let [dbUser] = await db
         .select()
         .from(users)
         .where(eq(users.clerkId, clerkId))
         .limit(1);
 
-      if (existingUser) {
-        // Update existing user (preserve existing role & isActive)
+      if (!dbUser && email) {
+        // No user with this clerkId — try to find by email (e.g. admin
+        // signing in with Google OAuth for the first time)
+        [dbUser] = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, email))
+          .limit(1);
+      }
+
+      if (dbUser) {
+        // Update existing user — preserve role & isActive, but update
+        // clerkId so the next lookup by clerkId works
         await db
           .update(users)
           .set({
+            clerkId, // update clerkId in case it changed (OAuth linking)
             email,
-            name,
+            name: firstName || dbUser.name,
+            lastName: lastName || dbUser.lastName,
             avatarUrl,
             updatedAt: new Date(),
           })
-          .where(eq(users.clerkId, clerkId));
+          .where(eq(users.id, dbUser.id));
 
-        // Sync role to Clerk public metadata for edge-level middleware checks
+        // Sync role to Clerk public metadata
         try {
           const client = await clerkClient();
           await client.users.updateUser(clerkId, {
-            publicMetadata: { role: existingUser.role },
+            publicMetadata: { role: dbUser.role },
           });
         } catch (e) {
           console.error("Failed to sync role to Clerk metadata:", e);
@@ -115,7 +126,8 @@ export async function POST(request: Request) {
         await db.insert(users).values({
           clerkId,
           email,
-          name,
+          name: firstName || email.split("@")[0],
+          lastName: lastName || null,
           avatarUrl,
           role: "customer",
           isActive: false,
