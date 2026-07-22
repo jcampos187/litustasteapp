@@ -13,12 +13,24 @@ export default async function AdminLayout({
   const { userId } = await auth();
   if (!userId) redirect("/auth/sign-in");
 
-  const user = await currentUser();
-  const [dbUser] = await db
+  const clerkUser = await currentUser();
+  const userEmail = clerkUser?.emailAddresses[0]?.emailAddress;
+
+  let [dbUser] = await db
     .select()
     .from(users)
     .where(eq(users.clerkId, userId))
     .limit(1);
+
+  // Fall back to email lookup if clerkId didn't match
+  // (Google OAuth creates a new clerkId before the webhook syncs)
+  if (!dbUser && userEmail) {
+    [dbUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, userEmail))
+      .limit(1);
+  }
 
   // Only admin role can access dashboard
   if (!dbUser || dbUser.role !== "admin") {
@@ -28,7 +40,7 @@ export default async function AdminLayout({
   return (
     <div className="flex min-h-[calc(100vh-4rem)]">
       <AdminSidebar
-        userName={user?.firstName || dbUser.name || dbUser.email}
+        userName={clerkUser?.firstName || dbUser.name || dbUser.email}
         userEmail={dbUser.email}
       />
       <div className="flex-1 overflow-auto bg-lt-cream/50">

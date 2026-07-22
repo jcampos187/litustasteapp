@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -14,11 +14,27 @@ export default async function Header() {
   let isAdmin = false;
   if (userId) {
     try {
-      const [dbUser] = await db
+      let [dbUser] = await db
         .select()
         .from(users)
         .where(eq(users.clerkId, userId))
         .limit(1);
+
+      // Fall back to email lookup if clerkId didn't match
+      // (happens when Google OAuth creates a new clerkId before the
+      //  Clerk webhook syncs the user's DB record)
+      if (!dbUser) {
+        const clerkUser = await currentUser();
+        const userEmail = clerkUser?.emailAddresses[0]?.emailAddress;
+        if (userEmail) {
+          [dbUser] = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, userEmail))
+            .limit(1);
+        }
+      }
+
       isAdmin = !!dbUser && dbUser.role === "admin";
     } catch {
       // Gracefully handle DB errors
