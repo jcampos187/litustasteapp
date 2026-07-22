@@ -57,25 +57,18 @@ export default function HeroCarousel() {
   }, [goTo]);
 
   return (
-    <div className="animate-fade-in-up relative mx-auto w-full max-w-[280px] sm:max-w-sm" style={{ animationDelay: "0.2s" }}>
-      {/* ── Elegant dark frame ─────────────────────────────────── */}
-      <div
-        className="group relative"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        {/* ── Dark frame body ───────────────────────────────────── */}
+    <div className="animate-fade-in-up mx-auto w-full max-w-[280px] sm:max-w-sm" style={{ animationDelay: "0.2s" }}>
+      {/* ── Container with lt-hero-frame gradient border ──────── */}
+      <div className="lt-hero-frame group relative">
         <div
-          className="relative rounded-2xl bg-lt-dark-light p-2.5
-                     shadow-[0_16px_48px_-12px_rgba(0,0,0,0.4)]
-                     transition-all duration-500
-                     group-hover:shadow-[0_24px_64px_-16px_rgba(0,0,0,0.5)]
-                     group-hover:-translate-y-1"
+          className="lt-img-shine relative overflow-hidden rounded-[18px] shadow-2xl shadow-lt-green/15 transition-all duration-500 group-hover:shadow-[0_24px_64px_-16px_rgba(0,0,0,0.25)]"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
         >
-          {/* ── Inner border accent ───────────────────────────── */}
-          <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl ring-1 ring-white/[0.06]">
-            {/* Slides with Ken Burns CSS animation */}
-            <div className="absolute inset-0 overflow-hidden rounded-xl">
+          {/* ── Inner image area (3:4 portrait) ─────────────────── */}
+          <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[18px]">
+            {/* Slides */}
+            <div className="absolute inset-0">
               {slides.map((src, i) => (
                 <div
                   key={src}
@@ -83,30 +76,23 @@ export default function HeroCarousel() {
                     i === current ? "opacity-100" : "opacity-0"
                   }`}
                 >
-                  <div
-                    className={`relative h-full w-full ${
-                      i === current ? "animate-ken-burns" : "scale-100"
-                    }`}
-                  >
-                    <Image
-                      src={src}
-                      alt={`Platillo ${i + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
-                      priority={i < 2}
-                    />
-                  </div>
+                  <Image
+                    src={src}
+                    alt={`Platillo ${i + 1}`}
+                    fill
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+                    priority={i < 2}
+                  />
                 </div>
               ))}
             </div>
 
-            {/* ── Gradient overlays ──────────────────────────────── */}
-            <div className="pointer-events-none absolute inset-0 z-[2] rounded-xl bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-            <div className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-16 bg-gradient-to-b from-black/30 to-transparent" />
+            {/* ── Gradient depth overlay ───────────────────────── */}
+            <div className="pointer-events-none absolute inset-0 rounded-[18px] bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
             {/* ── Top badge ──────────────────────────────────────── */}
-            <div className="absolute left-3 top-3 z-[5]">
+            <div className="absolute left-3 top-3 z-10">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1 text-[0.6rem] font-semibold tracking-wider text-white/80 shadow-sm backdrop-blur-md">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-lt-green/80" />
                 {String(current + 1).padStart(2, "0")} / {String(totalSlides).padStart(2, "0")}
@@ -115,7 +101,7 @@ export default function HeroCarousel() {
 
             {/* ── Previous / Next buttons ─────────────────────────── */}
             <div
-              className={`absolute inset-x-0 top-1/2 z-[5] flex -translate-y-1/2 justify-between px-1.5 transition-all duration-300 ${
+              className={`absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 justify-between px-1.5 transition-all duration-300 ${
                 isHovered ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -136,7 +122,7 @@ export default function HeroCarousel() {
             </div>
 
             {/* ── Bottom controls: pause/play ────────────────────── */}
-            <div className="absolute bottom-3 left-1/2 z-[5] -translate-x-1/2">
+            <div className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2">
               <button
                 onClick={() => setIsPaused((p) => !p)}
                 aria-label={isPaused ? "Reanudar" : "Pausar"}
@@ -150,22 +136,22 @@ export default function HeroCarousel() {
               </button>
             </div>
           </div>
+        </div>
 
-          {/* ── Frame bottom rail ───────────────────────────────── */}
-          <div className="mt-2.5 flex items-center justify-center gap-1.5 px-1">
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => goTo(i)}
-                aria-label={`Ir a imagen ${i + 1}`}
-                className={`rounded-full transition-all duration-500 ${
-                  i === current
-                    ? "w-5 bg-white/60"
-                    : "w-1 bg-white/20 hover:bg-white/40"
-                } h-1`}
-              />
-            ))}
-          </div>
+        {/* ── Pagination dots ────────────────────────────────── */}
+        <div className="mt-3 flex items-center justify-center gap-1.5 px-1">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              aria-label={`Ir a imagen ${i + 1}`}
+              className={`rounded-full transition-all duration-500 ${
+                i === current
+                  ? "w-5 bg-lt-green/70"
+                  : "w-1.5 bg-lt-charcoal/20 hover:bg-lt-charcoal/40"
+              } h-1.5`}
+            />
+          ))}
         </div>
       </div>
 
@@ -174,7 +160,7 @@ export default function HeroCarousel() {
         <button
           onClick={() => goTo(currentRef.current - 1)}
           aria-label="Anterior"
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-lt-dark-light/60 text-white/40 transition-all hover:bg-lt-dark-light hover:text-white/70 active:scale-90"
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-lt-charcoal/5 text-lt-charcoal/40 transition-all hover:bg-lt-charcoal/10 hover:text-lt-charcoal/70 active:scale-90"
         >
           <ChevronLeft className="h-3 w-3" />
         </button>
@@ -187,7 +173,7 @@ export default function HeroCarousel() {
               aria-label={`Ir a imagen ${i + 1}`}
               className={`snap-start relative shrink-0 overflow-hidden rounded-lg transition-all duration-300 ${
                 i === current
-                  ? "h-10 w-10 scale-110 ring-2 ring-white/50 shadow-md"
+                  ? "h-10 w-10 scale-110 ring-2 ring-lt-green/50 shadow-md"
                   : "h-8 w-8 opacity-50 hover:opacity-80 hover:scale-105"
               }`}
             >
@@ -205,7 +191,7 @@ export default function HeroCarousel() {
         <button
           onClick={() => goTo(currentRef.current + 1)}
           aria-label="Siguiente"
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-lt-dark-light/60 text-white/40 transition-all hover:bg-lt-dark-light hover:text-white/70 active:scale-90"
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-lt-charcoal/5 text-lt-charcoal/40 transition-all hover:bg-lt-charcoal/10 hover:text-lt-charcoal/70 active:scale-90"
         >
           <ChevronRight className="h-3 w-3" />
         </button>

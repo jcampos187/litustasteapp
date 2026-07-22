@@ -489,16 +489,6 @@ select:focus-visible {
   animation: fadeInUp 0.6s ease-out forwards;
 }
 
-/* ─── Ken Burns cinematic zoom for hero carousel ────────────── */
-@keyframes ken-burns {
-  from { transform: scale(1); }
-  to   { transform: scale(1.08); }
-}
-
-.animate-ken-burns {
-  animation: ken-burns 4.5s ease-out forwards;
-}
-
 /* ─── Hide scrollbar for thumbnail strip ─────────────────────── */
 @utility scrollbar-none {
   scrollbar-width: none;
