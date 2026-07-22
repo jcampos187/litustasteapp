@@ -72,11 +72,25 @@ export default function CartPage() {
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Error al enviar el pedido");
+        let errorMsg = "Error al enviar el pedido";
+        try {
+          const data = await res.json();
+          errorMsg = data.error || errorMsg;
+        } catch {
+          // Response wasn't valid JSON — use status-based fallback
+          if (res.status === 401) errorMsg = "Debes iniciar sesión para realizar un pedido";
+          else if (res.status === 403) errorMsg = "Tu cuenta está pendiente de aprobación";
+          else if (res.status === 404) errorMsg = "Usuario no encontrado. Tu cuenta podría no estar sincronizada.";
+        }
+        throw new Error(errorMsg);
       }
 
-      const order = await res.json();
+      let order;
+      try {
+        order = await res.json();
+      } catch {
+        throw new Error("Error al procesar la respuesta del servidor");
+      }
       clearCart();
       router.push(`/order/confirmation?orderId=${order.id}`);
     } catch (err) {

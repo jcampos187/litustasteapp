@@ -2,15 +2,13 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+// All API routes are public — they each handle their own auth internally
+// via auth() calls. The middleware only needs to protect page routes.
 const isPublicRoute = createRouteMatcher([
   "/",
   "/menu",
   "/auth(.*)",
-  "/api/uploadthing",
-  "/api/auth(.*)",
-  "/api/settings",
-  "/api/meals(.*)",
-  "/api/orders(.*)",
+  "/api/(.*)",
 ]);
 
 const authMiddleware = clerkMiddleware(async (auth, req) => {
