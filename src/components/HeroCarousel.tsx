@@ -57,7 +57,7 @@ export default function HeroCarousel() {
   }, [goTo]);
 
   return (
-    <div className="animate-fade-in-up mx-auto w-full max-w-[280px] sm:max-w-sm" style={{ animationDelay: "0.2s" }}>
+    <div className="animate-fade-in-up mx-auto w-full max-w-[220px] sm:max-w-[260px]" style={{ animationDelay: "0.2s" }}>
       {/* ── Container with lt-hero-frame gradient border ──────── */}
       <div className="lt-hero-frame group relative">
         <div
@@ -65,8 +65,8 @@ export default function HeroCarousel() {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          {/* ── Inner image area (3:4 portrait) ─────────────────── */}
-          <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[18px]">
+          {/* ── Inner image area (square) ────────────────────────── */}
+          <div className="relative aspect-square w-full overflow-hidden rounded-[18px]">
             {/* Slides */}
             <div className="absolute inset-0">
               {slides.map((src, i) => (
@@ -81,7 +81,7 @@ export default function HeroCarousel() {
                     alt={`Platillo ${i + 1}`}
                     fill
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+                    sizes="220px"
                     priority={i < 2}
                   />
                 </div>
@@ -92,109 +92,51 @@ export default function HeroCarousel() {
             <div className="pointer-events-none absolute inset-0 rounded-[18px] bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
             {/* ── Top badge ──────────────────────────────────────── */}
-            <div className="absolute left-3 top-3 z-10">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1 text-[0.6rem] font-semibold tracking-wider text-white/80 shadow-sm backdrop-blur-md">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-lt-green/80" />
+            <div className="absolute left-2.5 top-2.5 z-10">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-black/40 px-2 py-0.5 text-[0.55rem] font-semibold tracking-wider text-white/80 shadow-sm backdrop-blur-md">
+                <span className="h-1 w-1 animate-pulse rounded-full bg-lt-green/80" />
                 {String(current + 1).padStart(2, "0")} / {String(totalSlides).padStart(2, "0")}
               </span>
             </div>
 
             {/* ── Previous / Next buttons ─────────────────────────── */}
             <div
-              className={`absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 justify-between px-1.5 transition-all duration-300 ${
+              className={`absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 justify-between px-1 transition-all duration-300 ${
                 isHovered ? "opacity-100" : "opacity-0"
               }`}
             >
               <button
                 onClick={() => goTo(currentRef.current - 1)}
                 aria-label="Anterior"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white/70 shadow-lg shadow-black/20 backdrop-blur-lg transition-all duration-200 hover:bg-white/25 hover:text-white hover:-translate-x-0.5 active:scale-90"
+                className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 text-white/70 shadow-lg shadow-black/20 backdrop-blur-lg transition-all duration-200 hover:bg-white/25 hover:text-white hover:-translate-x-0.5 active:scale-90"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-3.5 w-3.5" />
               </button>
               <button
                 onClick={() => goTo(currentRef.current + 1)}
                 aria-label="Siguiente"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white/70 shadow-lg shadow-black/20 backdrop-blur-lg transition-all duration-200 hover:bg-white/25 hover:text-white hover:translate-x-0.5 active:scale-90"
+                className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 text-white/70 shadow-lg shadow-black/20 backdrop-blur-lg transition-all duration-200 hover:bg-white/25 hover:text-white hover:translate-x-0.5 active:scale-90"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-3.5 w-3.5" />
               </button>
             </div>
 
             {/* ── Bottom controls: pause/play ────────────────────── */}
-            <div className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2">
+            <div className="absolute bottom-2.5 left-1/2 z-10 -translate-x-1/2">
               <button
                 onClick={() => setIsPaused((p) => !p)}
                 aria-label={isPaused ? "Reanudar" : "Pausar"}
-                className="flex h-7 w-7 items-center justify-center rounded-full bg-black/30 text-white/50 backdrop-blur-sm transition-all hover:bg-black/50 hover:text-white active:scale-90"
+                className="flex h-6 w-6 items-center justify-center rounded-full bg-black/30 text-white/50 backdrop-blur-sm transition-all hover:bg-black/50 hover:text-white active:scale-90"
               >
                 {isPaused ? (
-                  <Play className="h-3 w-3" />
+                  <Play className="h-2.5 w-2.5" />
                 ) : (
-                  <Pause className="h-3 w-3" />
+                  <Pause className="h-2.5 w-2.5" />
                 )}
               </button>
             </div>
           </div>
         </div>
-
-        {/* ── Pagination dots ────────────────────────────────── */}
-        <div className="mt-3 flex items-center justify-center gap-1.5 px-1">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goTo(i)}
-              aria-label={`Ir a imagen ${i + 1}`}
-              className={`rounded-full transition-all duration-500 ${
-                i === current
-                  ? "w-5 bg-lt-green/70"
-                  : "w-1.5 bg-lt-charcoal/20 hover:bg-lt-charcoal/40"
-              } h-1.5`}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* ── Thumbnail strip ────────────────────────────────────── */}
-      <div className="mt-3 flex items-center justify-center gap-1.5 px-2">
-        <button
-          onClick={() => goTo(currentRef.current - 1)}
-          aria-label="Anterior"
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-lt-charcoal/5 text-lt-charcoal/40 transition-all hover:bg-lt-charcoal/10 hover:text-lt-charcoal/70 active:scale-90"
-        >
-          <ChevronLeft className="h-3 w-3" />
-        </button>
-
-        <div className="scrollbar-none flex items-center gap-1.5 overflow-x-auto snap-x snap-mandatory py-1">
-          {slides.map((src, i) => (
-            <button
-              key={src}
-              onClick={() => goTo(i)}
-              aria-label={`Ir a imagen ${i + 1}`}
-              className={`snap-start relative shrink-0 overflow-hidden rounded-lg transition-all duration-300 ${
-                i === current
-                  ? "h-10 w-10 scale-110 ring-2 ring-lt-green/50 shadow-md"
-                  : "h-8 w-8 opacity-50 hover:opacity-80 hover:scale-105"
-              }`}
-            >
-              <Image
-                src={src}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="40px"
-              />
-            </button>
-          ))}
-        </div>
-
-        <button
-          onClick={() => goTo(currentRef.current + 1)}
-          aria-label="Siguiente"
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-lt-charcoal/5 text-lt-charcoal/40 transition-all hover:bg-lt-charcoal/10 hover:text-lt-charcoal/70 active:scale-90"
-        >
-          <ChevronRight className="h-3 w-3" />
-        </button>
       </div>
     </div>
   );
