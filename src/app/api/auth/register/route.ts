@@ -8,10 +8,10 @@ import { sendNewRegistrationWhatsApp } from "@/lib/whatsapp";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, phone, deliveryAddress, city, password } = body;
+    const { name, lastName, email, phone, deliveryAddress, city, password } = body;
 
     // Validate required fields
-    if (!name || !email || !phone || !deliveryAddress || !password) {
+    if (!name || !lastName || !email || !phone || !deliveryAddress || !password) {
       return NextResponse.json(
         { error: "Todos los campos marcados con * son requeridos" },
         { status: 400 }
@@ -77,11 +77,14 @@ export async function POST(request: Request) {
     const clerkUser = await clerkRes.json();
     const clerkId = clerkUser.id;
 
+    const fullName = `${name} ${lastName}`.trim();
+
     // 2. Create user in our DB with approval pending
     await db.insert(users).values({
       clerkId,
       email,
-      name,
+      name, // first name
+      lastName,
       phone,
       deliveryAddress,
       city: city || null,
@@ -91,8 +94,8 @@ export async function POST(request: Request) {
     });
 
     // 3. Notify admin about the new registration
-    await notifyAdminNewRegistration(name, email, phone, deliveryAddress, city).catch(console.error);
-    await sendNewRegistrationWhatsApp(name, email, phone).catch(console.error);
+    await notifyAdminNewRegistration(fullName, email, phone, deliveryAddress, city).catch(console.error);
+    await sendNewRegistrationWhatsApp(fullName, email, phone).catch(console.error);
 
     return NextResponse.json({
       success: true,

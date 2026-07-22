@@ -166,6 +166,7 @@ export type CreateInviteInput = z.infer<typeof createInviteSchema>;
 
 export const registerSchema = z.object({
   name: z.string().min(1, "El nombre es requerido").max(100),
+  lastName: z.string().min(1, "El apellido es requerido").max(100),
   email: z.string().email("Correo electrónico inválido"),
   phone: z.string().min(1, "El teléfono es requerido").max(20),
   deliveryAddress: z.string().min(1, "La dirección es requerida").max(300),
@@ -182,6 +183,7 @@ export type RegisterInput = z.infer<typeof registerSchema>;
 
 export const updateProfileSchema = z.object({
   name: z.string().min(1).max(100).optional(),
+  lastName: z.string().min(1).max(100).optional(),
   phone: z.string().min(1).max(20).optional(),
   deliveryAddress: z.string().min(1).max(300).optional(),
   city: z.string().max(100).nullable().optional(),

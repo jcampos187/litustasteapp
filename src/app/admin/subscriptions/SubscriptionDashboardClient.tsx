@@ -10,6 +10,7 @@ interface RecentSubscription {
   createdAt: Date;
   userEmail: string | null;
   userName: string | null;
+  userLastName: string | null;
 }
 
 interface SubscriptionDashboardClientProps {
@@ -155,7 +156,7 @@ export default function SubscriptionDashboardClient({
                     </div>
                     <div>
                       <p className="text-sm font-medium text-lt-warm-brown">
-                        {sub.userName || sub.userEmail || "Usuario"}
+                        {`${sub.userName || ""} ${sub.userLastName || ""}`.trim() || sub.userEmail || "Usuario"}
                       </p>
                       <p className="text-xs text-lt-charcoal/50">
                         {sub.userAgent

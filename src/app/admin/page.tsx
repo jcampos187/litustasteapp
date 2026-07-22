@@ -26,6 +26,7 @@ async function getDashboardStats() {
         status: orders.status,
         createdAt: orders.createdAt,
         customerName: users.name,
+        customerLastName: users.lastName,
         customerEmail: users.email,
       })
       .from(orders)
@@ -167,7 +168,7 @@ export default async function AdminDashboardPage() {
                       Pedido #{order.id.slice(0, 8)}
                     </p>
                     <p className="text-xs text-lt-charcoal/50">
-                      {order.customerName || order.customerEmail || "Cliente"} ·{" "}
+                      {`${order.customerName || ""} ${order.customerLastName || ""}`.trim() || order.customerEmail || "Cliente"} ·{" "}
                       {new Date(order.createdAt).toLocaleDateString("es-CR", {
                         day: "numeric",
                         month: "short",

@@ -41,13 +41,14 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json();
-    const { name, phone, deliveryAddress, city, province, postalCode, dietaryNotes } = body;
+    const { name, lastName, phone, deliveryAddress, city, province, postalCode, dietaryNotes } = body;
 
     const updateData: Record<string, unknown> = {
       updatedAt: new Date(),
     };
 
     if (name !== undefined) updateData.name = name;
+    if (lastName !== undefined) updateData.lastName = lastName;
     if (phone !== undefined) updateData.phone = phone;
     if (deliveryAddress !== undefined) updateData.deliveryAddress = deliveryAddress;
     if (city !== undefined) updateData.city = city;

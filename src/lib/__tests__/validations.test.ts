@@ -125,7 +125,8 @@ describe("updateOrderStatusSchema", () => {
 describe("registerSchema", () => {
   it("validates a correct registration payload", () => {
     const result = registerSchema.safeParse({
-      name: "Juan Pérez",
+      name: "Juan",
+      lastName: "Pérez",
       email: "juan@example.com",
       phone: "8888-8888",
       deliveryAddress: "San José, Rohrmoser",
@@ -137,6 +138,7 @@ describe("registerSchema", () => {
   it("rejects short password", () => {
     const result = registerSchema.safeParse({
       name: "Juan",
+      lastName: "Pérez",
       email: "juan@example.com",
       phone: "8888-8888",
       deliveryAddress: "San José",
@@ -151,6 +153,7 @@ describe("registerSchema", () => {
   it("rejects invalid email", () => {
     const result = registerSchema.safeParse({
       name: "Juan",
+      lastName: "Pérez",
       email: "not-an-email",
       phone: "8888-8888",
       deliveryAddress: "San José",
@@ -162,6 +165,7 @@ describe("registerSchema", () => {
   it("rejects missing required fields", () => {
     const result = registerSchema.safeParse({
       name: "",
+      lastName: "",
       email: "",
       phone: "",
       deliveryAddress: "",

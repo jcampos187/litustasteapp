@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     name: "",
+    lastName: "",
     email: "",
     phone: "",
     deliveryAddress: "",
@@ -63,19 +64,34 @@ export default function RegisterPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Name */}
-          <div>
-            <label className="block text-sm font-medium text-lt-charcoal/70">
-              Nombre Completo *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.name}
-              onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
-              className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
-              placeholder="Tu nombre completo"
-            />
+          {/* Name & Last Name */}
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-lt-charcoal/70">
+                Nombre *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
+                className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
+                placeholder="Tu nombre"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-lt-charcoal/70">
+                Apellido *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.lastName}
+                onChange={(e) => setFormData((p) => ({ ...p, lastName: e.target.value }))}
+                className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-3 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
+                placeholder="Tu apellido"
+              />
+            </div>
           </div>
 
           {/* Email */}

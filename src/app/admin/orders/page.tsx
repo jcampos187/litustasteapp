@@ -19,6 +19,7 @@ export default async function AdminOrdersPage(props: {
       notes: orders.notes,
       createdAt: orders.createdAt,
       customerName: users.name,
+      customerLastName: users.lastName,
       customerEmail: users.email,
       weeklyMenuLabel: weeklyMenus.label,
     })
@@ -124,7 +125,7 @@ export default async function AdminOrdersPage(props: {
                         </span>
                       </div>
                       <p className="mt-1.5 text-sm text-lt-charcoal/50">
-                        {order.customerName || order.customerEmail || "Cliente"} ·{" "}
+                        {`${order.customerName || ""} ${order.customerLastName || ""}`.trim() || order.customerEmail || "Cliente"} ·{" "}
                         {new Date(order.createdAt).toLocaleDateString("es-CR", {
                           day: "numeric",
                           month: "long",

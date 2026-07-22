@@ -43,7 +43,7 @@ export default async function AdminApprovalsPage() {
                   </div>
                   <div>
                     <h3 className="font-bold text-lt-warm-brown">
-                      {user.name || "Sin nombre"}
+                      {`${user.name || ""} ${user.lastName || ""}`.trim() || "Sin nombre"}
                     </h3>
                     <p className="text-sm text-lt-charcoal/60">{user.email}</p>
                     <div className="mt-2 space-y-1 text-sm text-lt-charcoal/50">

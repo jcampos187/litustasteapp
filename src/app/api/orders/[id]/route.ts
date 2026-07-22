@@ -71,13 +71,14 @@ export async function PATCH(
       .select({
         customerEmail: users.email,
         customerName: users.name,
+        customerLastName: users.lastName,
       })
       .from(orders)
       .leftJoin(users, eq(orders.customerId, users.id))
       .where(eq(orders.id, id))
       .limit(1);
 
-    const customerName = orderWithCustomer?.customerName || "Cliente";
+    const customerFullName = `${orderWithCustomer?.customerName || ""} ${orderWithCustomer?.customerLastName || ""}`.trim() || "Cliente";
     const customerEmail = orderWithCustomer?.customerEmail;
 
     // ── Send email notifications to the customer ────────────────
@@ -86,10 +87,10 @@ export async function PATCH(
     if (customerEmail) {
       try {
         if (status === "recibido") {
-          await sendOrderReceivedEmail(customerEmail, customerName, id);
+          await sendOrderReceivedEmail(customerEmail, customerFullName, id);
           console.warn(`✅ Recibido email sent to ${customerEmail} for order ${id}`);
         } else if (status === "completed") {
-          await sendOrderCompletedEmail(customerEmail, customerName, id);
+          await sendOrderCompletedEmail(customerEmail, customerFullName, id);
           console.warn(`✅ Completed email sent to ${customerEmail} for order ${id}`);
         }
       } catch (e) {
@@ -99,7 +100,7 @@ export async function PATCH(
 
     // ── Send WhatsApp notification to the admin ─────────────────
     if (status === "recibido" || status === "completed") {
-      sendOrderStatusChangedWhatsApp(customerName, id, status).catch(console.error);
+      sendOrderStatusChangedWhatsApp(customerFullName, id, status).catch(console.error);
     }
 
     // ── Send push notification to the customer ──────────────────
@@ -118,12 +119,12 @@ export async function PATCH(
         status === "recibido"
           ? {
               title: "✅ ¡Pedido Recibido!",
-              body: `Hemos recibido tu pedido correctamente, ${customerName}.`,
+              body: `Hemos recibido tu pedido correctamente, ${customerFullName}.`,
               url: `/account/orders/${id}`,
             }
           : {
               title: "🍽️ ¡Pedido Completado!",
-              body: `Tu pedido está listo, ${customerName}. ¡Buen provecho!`,
+              body: `Tu pedido está listo, ${customerFullName}. ¡Buen provecho!`,
               url: `/account/orders/${id}`,
             }
       )

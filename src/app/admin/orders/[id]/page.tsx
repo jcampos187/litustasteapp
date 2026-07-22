@@ -89,7 +89,7 @@ export default async function AdminOrderDetailPage(props: {
           Cliente
         </h2>
         <p className="mt-2 text-lg font-medium text-lt-warm-brown">
-          {customer?.name || "Sin nombre"}
+          {`${customer?.name || ""} ${customer?.lastName || ""}`.trim() || "Sin nombre"}
         </p>
         <div className="mt-3 space-y-2">
           {customer?.email && (

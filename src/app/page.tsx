@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db";
@@ -7,6 +6,7 @@ import { eq, and, desc } from "drizzle-orm";
 import ScrollReveal from "@/components/ScrollReveal";
 import MenuPreviewList from "@/components/MenuPreviewList";
 import CartSummary from "@/components/CartSummary";
+import HeroCarousel from "@/components/HeroCarousel";
 
 async function getActiveMenu() {
   try {
@@ -151,22 +151,9 @@ export default async function Home() {
             </div>
           </div>
 
-          {/* Right: Hero Image — hidden on mobile, shown lg+ */}
-          <div className="mt-16 hidden flex-1 lg:mt-0 lg:flex lg:justify-end lg:pl-16">
-            <div className="lt-hero-frame animate-fade-in-up" style={{animationDelay: '0.2s'}}>
-              <div className="lt-img-shine relative h-[420px] w-[420px] overflow-hidden rounded-[18px] shadow-2xl shadow-lt-green/15 xl:h-[520px] xl:w-[520px]">
-                <Image
-                  src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80"
-                  alt="Bowl de comida fresca y saludable"
-                  fill
-                  className="object-cover transition-transform duration-700 hover:scale-105"
-                  sizes="(max-width: 1024px) 0px, (max-width: 1280px) 420px, 520px"
-                  priority
-                />
-                {/* Gradient overlay for depth */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-lt-green/5 via-transparent to-lt-amber/5" />
-              </div>
-            </div>
+          {/* Right: Hero Carousel — dish photo slideshow */}
+          <div className="mt-12 w-full max-w-md flex-1 lg:mt-0 lg:flex lg:justify-end lg:pl-16 lg:max-w-none">
+            <HeroCarousel />
           </div>
         </div>
 

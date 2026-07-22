@@ -75,17 +75,19 @@ export async function PATCH(
       unitPrice: i.unitPrice,
     }));
 
+    const fullName = `${dbUser.name || ""} ${dbUser.lastName || ""}`.trim() || dbUser.email;
+
     // Email: both admin + customer
     sendOrderCancelledEmail(
       dbUser.email,
-      dbUser.name || dbUser.email,
+      fullName,
       id,
       itemsForNotification
     ).catch(console.error);
 
     // WhatsApp: admin
     sendOrderCancelledWhatsApp(
-      dbUser.name || dbUser.email,
+      fullName,
       itemsForNotification,
       dbUser.phone
     ).catch(console.error);

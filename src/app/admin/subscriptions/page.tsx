@@ -17,6 +17,7 @@ async function getPushStats() {
         createdAt: pushSubscriptions.createdAt,
         userEmail: users.email,
         userName: users.name,
+        userLastName: users.lastName,
       })
       .from(pushSubscriptions)
       .leftJoin(users, eq(pushSubscriptions.userId, users.id))

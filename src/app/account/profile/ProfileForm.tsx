@@ -8,6 +8,7 @@ import { useAuth } from "@clerk/nextjs";
 interface UserProfile {
   id: string;
   name: string | null;
+  lastName: string | null;
   email: string;
   phone: string | null;
   deliveryAddress: string | null;
@@ -28,6 +29,7 @@ export default function ProfileForm() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [formData, setFormData] = useState({
     name: "",
+    lastName: "",
     phone: "",
     deliveryAddress: "",
     city: "",
@@ -44,6 +46,7 @@ export default function ProfileForm() {
         setProfile(data);
         setFormData({
           name: data.name || "",
+          lastName: data.lastName || "",
           phone: data.phone || "",
           deliveryAddress: data.deliveryAddress || "",
           city: data.city || "",
@@ -126,18 +129,33 @@ export default function ProfileForm() {
       <div className="rounded-2xl border border-lt-cream-dark bg-white p-6 space-y-5">
         <h2 className="font-semibold text-lt-warm-brown">Información Personal</h2>
 
-        <div>
-          <label className="block text-sm font-medium text-lt-charcoal/70">
-            Nombre Completo *
-          </label>
-          <input
-            type="text"
-            required
-            value={formData.name}
-            onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
-            className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
-            placeholder="Tu nombre completo"
-          />
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label className="block text-sm font-medium text-lt-charcoal/70">
+              Nombre *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
+              className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
+              placeholder="Tu nombre"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-lt-charcoal/70">
+              Apellido *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.lastName}
+              onChange={(e) => setFormData((p) => ({ ...p, lastName: e.target.value }))}
+              className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
+              placeholder="Tu apellido"
+            />
+          </div>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
