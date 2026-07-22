@@ -66,7 +66,7 @@ export default function HeroCarousel() {
       >
         {/* ── Main image card ──────────────────────────────────── */}
         <div
-          className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl
+          className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl
                      shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3),_0_0_0_1px_rgba(255,255,255,0.08)]
                      ring-1 ring-white/10
                      transition-all duration-500
