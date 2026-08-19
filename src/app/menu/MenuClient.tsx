@@ -92,7 +92,7 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-12">
+    <div className="mx-auto max-w-7xl px-6 py-12">
       {/* Header */}
       <div className="text-center">
         <h1 className="text-3xl font-bold tracking-tight text-lt-warm-brown sm:text-4xl">
@@ -185,8 +185,8 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
         </p>
       </div>
 
-      {/* List */}
-      <div className="mt-6 divide-y divide-lt-card-border border-t border-lt-card-border">
+      {/* Grid */}
+      <div className="mt-6 grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
         {filteredItems.map((item) => {
           const cartItem = cartItems.find((i) => i.mealId === item.id);
           const tagSlugs = item.dietaryTags
@@ -196,100 +196,96 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
           return (
             <div
               key={item.id}
-              className="flex items-center gap-4 py-4 sm:gap-5 sm:py-5"
+              className="group relative flex flex-col overflow-hidden rounded-2xl border border-lt-card-border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-lt-green/5"
             >
-              {/* Thumbnail */}
-              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-lt-green/10 to-lt-terracotta/10 sm:h-20 sm:w-20">
+              {/* Image */}
+              <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-br from-lt-green/10 to-lt-terracotta/10">
                 {item.imageUrl ? (
                   <Image
                     src={item.imageUrl}
                     alt={item.name}
                     fill
-                    className="object-cover"
-                    sizes="80px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center">
-                    <span className="text-xl opacity-40">🍽️</span>
+                    <span className="text-4xl opacity-30">🍽️</span>
+                  </div>
+                )}
+
+                {/* Price badge */}
+                <div className="absolute right-2 top-2 rounded-lg bg-white/90 px-2.5 py-1 shadow-sm backdrop-blur-sm">
+                  <span className="text-sm font-bold text-lt-terracotta">
+                    {formatCRC(item.price)}
+                  </span>
+                </div>
+
+                {/* Cart quantity badge */}
+                {cartItem && (
+                  <div className="absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-lt-green text-[11px] font-bold text-white shadow-md">
+                    {cartItem.quantity}
                   </div>
                 )}
               </div>
 
-              {/* Info */}
-              <div className="min-w-0 flex-1">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h3 className="truncate text-base font-bold text-lt-warm-brown sm:text-lg">
-                      {item.name}
-                    </h3>
-                    {item.portionSize && (
-                      <p className="text-[11px] text-lt-charcoal/40">
-                        {item.portionSize}
-                      </p>
-                    )}
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <span className="block text-base font-bold text-lt-terracotta sm:text-lg">
-                      {formatCRC(item.price)}
-                    </span>
-                    {cartItem && (
-                      <>
-                        <span className="block text-xs font-semibold text-lt-warm-brown/60">
-                          Sub: {formatCRC(Number(item.price) * cartItem.quantity)}
-                        </span>
-                        <span className="text-[10px] font-medium text-lt-olive-dark">
-                          {cartItem.quantity} unid.
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
+              {/* Content */}
+              <div className="flex flex-1 flex-col p-3.5 sm:p-4">
+                <h3 className="text-sm font-bold leading-tight text-lt-warm-brown line-clamp-2 sm:text-base">
+                  {item.name}
+                </h3>
 
-                <p className="mt-0.5 line-clamp-1 text-sm text-lt-charcoal/50 sm:mt-1">
+                {item.portionSize && (
+                  <p className="mt-0.5 text-[11px] text-lt-charcoal/40">
+                    {item.portionSize}
+                  </p>
+                )}
+
+                <p className="mt-1 line-clamp-2 text-xs text-lt-charcoal/50">
                   {item.description}
                 </p>
 
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  {/* Macros */}
-                  {item.calories && (
-                    <span className="text-[11px] text-lt-charcoal/40">
-                      🔥 {item.calories} cal
-                    </span>
-                  )}
-                  {item.proteinG && (
-                    <span className="text-[11px] text-lt-charcoal/40">
-                      💪 {item.proteinG}g prot.
-                    </span>
-                  )}
-
-                  {/* Dietary tags */}
-                  {tagSlugs.slice(0, 3).map((slug) => {
-                    const tag = tags.find((t) => t.slug === slug);
-                    return (
-                      <span
-                        key={slug}
-                        className="inline-flex items-center gap-0.5 rounded-full bg-lt-green/8 px-2 py-0.5 text-[10px] font-medium text-lt-olive-dark"
-                      >
-                        {tag?.emoji && <span>{tag.emoji}</span>}
-                        {tag?.name || slug}
+                {/* Tags & macros */}
+                <div className="mt-auto pt-2.5">
+                  <div className="flex flex-wrap items-center gap-1">
+                    {item.calories && (
+                      <span className="text-[10px] text-lt-charcoal/40">
+                        🔥 {item.calories} cal
                       </span>
-                    );
-                  })}
+                    )}
+                    {item.proteinG && (
+                      <span className="text-[10px] text-lt-charcoal/40">
+                        💪 {item.proteinG}g
+                      </span>
+                    )}
+                    {tagSlugs.slice(0, 2).map((slug) => {
+                      const tag = tags.find((t) => t.slug === slug);
+                      return (
+                        <span
+                          key={slug}
+                          className="inline-flex items-center gap-0.5 rounded-full bg-lt-green/8 px-1.5 py-0.5 text-[9px] font-medium text-lt-olive-dark"
+                        >
+                          {tag?.emoji && <span>{tag.emoji}</span>}
+                          {tag?.name || slug}
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
-              {/* Quantity controls — only for logged-in users */}
-              <div className="shrink-0 self-center">
+              {/* Add to cart / quantity controls */}
+              <div className="border-t border-lt-card-border p-3 sm:p-3.5">
                 {!isSignedIn ? (
                   <Link
                     href="/auth/sign-in"
-                    className="inline-flex items-center gap-1.5 rounded-xl border-2 border-lt-terracotta/30 bg-lt-terracotta/5 px-3 py-2 text-[11px] font-semibold text-lt-terracotta transition-all hover:border-lt-terracotta hover:bg-lt-terracotta/10 hover:text-lt-terracotta-dark sm:px-4 sm:py-2.5 sm:text-xs"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-lt-terracotta/30 bg-lt-terracotta/5 py-2 text-[11px] font-semibold text-lt-terracotta transition-all hover:border-lt-terracotta hover:bg-lt-terracotta/10 sm:text-xs"
                   >
-                    <LogIn className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <LogIn className="h-3.5 w-3.5" />
                     Inicia sesión
                   </Link>
                 ) : cartItem ? (
-                  <div className="flex items-center gap-1 sm:gap-1.5">
+                  <div className="flex items-center justify-center gap-1.5">
                     <button
                       onClick={() => {
                         if (cartItem.quantity <= 1) {
@@ -298,24 +294,24 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
                           updateQuantity(item.id, cartItem.quantity - 1);
                         }
                       }}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-lt-card-border text-lt-charcoal/50 transition-all hover:border-lt-terracotta/40 hover:text-lt-terracotta sm:h-9 sm:w-9"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-lt-card-border text-lt-charcoal/50 transition-all hover:border-lt-terracotta/40 hover:text-lt-terracotta"
                       aria-label="Disminuir cantidad"
                     >
                       <Minus className="h-3.5 w-3.5" />
                     </button>
-                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-lt-green/10 text-sm font-bold text-lt-green sm:h-9 sm:w-9">
+                    <span className="flex h-8 min-w-[2rem] items-center justify-center rounded-lg bg-lt-green/10 text-sm font-bold text-lt-green">
                       {cartItem.quantity}
                     </span>
                     <button
                       onClick={() => updateQuantity(item.id, cartItem.quantity + 1)}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-lt-card-border text-lt-charcoal/50 transition-all hover:border-lt-terracotta/40 hover:text-lt-terracotta sm:h-9 sm:w-9"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-lt-card-border text-lt-charcoal/50 transition-all hover:border-lt-terracotta/40 hover:text-lt-terracotta"
                       aria-label="Aumentar cantidad"
                     >
                       <Plus className="h-3.5 w-3.5" />
                     </button>
                     <button
                       onClick={() => setRemoveConfirmTarget(item.id)}
-                      className="ml-1 flex h-8 w-8 items-center justify-center rounded-lg text-lt-charcoal/30 transition-all hover:bg-red-50 hover:text-red-400 sm:h-9 sm:w-9"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-lt-charcoal/30 transition-all hover:bg-red-50 hover:text-red-400"
                       aria-label="Eliminar del carrito"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -332,36 +328,37 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
                         portionSize: item.portionSize || undefined,
                       })
                     }
-                    className="flex h-9 w-9 items-center justify-center rounded-xl bg-lt-terracotta text-white shadow-sm shadow-lt-terracotta/20 transition-all hover:bg-lt-terracotta-dark hover:shadow-md hover:shadow-lt-terracotta/30 active:scale-90 sm:h-10 sm:w-10"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-lt-terracotta py-2.5 text-sm font-semibold text-white shadow-sm shadow-lt-terracotta/20 transition-all hover:bg-lt-terracotta-dark hover:shadow-md active:scale-[0.98]"
                     aria-label="Agregar al carrito"
                   >
-                    <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <Plus className="h-4 w-4" />
+                    Agregar
                   </button>
                 )}
               </div>
             </div>
           );
         })}
-
-        {/* Empty state */}
-        {filteredItems.length === 0 && (
-          <div className="py-16 text-center">
-            <span className="text-4xl">🔍</span>
-            <p className="mt-4 text-lg font-medium text-lt-charcoal/60">
-              No encontramos platillos con esos filtros
-            </p>
-            <button
-              onClick={() => {
-                setSearch("");
-                setActiveTags([]);
-              }}
-              className="mt-4 text-sm font-medium text-lt-terracotta hover:underline"
-            >
-              Limpiar filtros
-            </button>
-          </div>
-        )}
       </div>
+
+      {/* Empty state */}
+      {filteredItems.length === 0 && (
+        <div className="py-16 text-center">
+          <span className="text-4xl">🔍</span>
+          <p className="mt-4 text-lg font-medium text-lt-charcoal/60">
+            No encontramos platillos con esos filtros
+          </p>
+          <button
+            onClick={() => {
+              setSearch("");
+              setActiveTags([]);
+            }}
+            className="mt-4 text-sm font-medium text-lt-terracotta hover:underline"
+          >
+            Limpiar filtros
+          </button>
+        </div>
+      )}
 
       {/* ── Confirmación de eliminar artículo ── */}
       <ConfirmModal
