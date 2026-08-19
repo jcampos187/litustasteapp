@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, SlidersHorizontal, Plus, Minus, Trash2, ShoppingCart } from "lucide-react";
+import { Search, SlidersHorizontal, Plus, Minus, Trash2, ShoppingCart, LogIn } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { useCart } from "@/components/CartProvider";
 import ConfirmModal from "@/components/ConfirmModal";
@@ -300,7 +300,15 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
 
               {/* Add to cart / quantity controls */}
               <div className="border-t border-lt-card-border p-2 sm:p-2.5">
-                {cartItem ? (
+                {!isSignedIn ? (
+                  <Link
+                    href="/auth/sign-in"
+                    className="flex w-full items-center justify-center gap-1 rounded-lg border border-lt-card-border py-1.5 text-[10px] font-medium text-lt-charcoal/40 transition-all hover:border-lt-terracotta/30 hover:text-lt-terracotta"
+                  >
+                    <LogIn className="h-3 w-3" />
+                    Agregar
+                  </Link>
+                ) : cartItem ? (
                   <div className="flex items-center justify-center gap-1">
                     <button
                       onClick={() => {
