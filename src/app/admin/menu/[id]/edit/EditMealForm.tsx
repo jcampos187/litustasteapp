@@ -10,6 +10,7 @@ interface Meal {
   name: string;
   description: string;
   price: string;
+  category: string | null;
   portionSize: string | null;
   calories: number | null;
   proteinG: number | null;
@@ -29,9 +30,22 @@ interface DietaryTag {
 export default function EditMealForm({ meal, allTags }: { meal: Meal; allTags: DietaryTag[] }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const categories = [
+    "Pollo",
+    "Carnes",
+    "Arroces",
+    "Sopas",
+    "Lasaña",
+    "Acompañamientos",
+    "Ensaladas",
+    "Bebidas",
+    "Postres",
+  ];
+
   const [formData, setFormData] = useState({
     name: meal.name,
     price: meal.price,
+    category: meal.category || "",
     dietaryTags: meal.dietaryTags ? meal.dietaryTags.split(",").map((t) => t.trim()) : [],
     isActive: meal.isActive,
   });
@@ -57,6 +71,7 @@ export default function EditMealForm({ meal, allTags }: { meal: Meal; allTags: D
           name: formData.name,
           description: "",
           price: parseFloat(formData.price),
+          category: formData.category || undefined,
           dietaryTags: formData.dietaryTags.length > 0 ? formData.dietaryTags : undefined,
           isActive: formData.isActive,
         }),
@@ -112,6 +127,20 @@ export default function EditMealForm({ meal, allTags }: { meal: Meal; allTags: D
               onChange={(e) => setFormData((p) => ({ ...p, price: e.target.value }))}
               className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-lt-charcoal/70">Categoría</label>
+            <select
+              value={formData.category}
+              onChange={(e) => setFormData((p) => ({ ...p, category: e.target.value }))}
+              className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
+            >
+              <option value="">Sin categoría</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
           </div>
         </div>
 

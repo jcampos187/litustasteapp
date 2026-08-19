@@ -73,6 +73,11 @@ export default async function AdminMenuPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3">
                     <h3 className="font-bold text-lt-warm-brown">{meal.name}</h3>
+                    {meal.category && (
+                      <span className="rounded-full bg-lt-green/10 px-2.5 py-0.5 text-xs font-medium text-lt-olive-dark">
+                        {meal.category}
+                      </span>
+                    )}
                     {!meal.isActive && (
                       <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
                         Inactivo

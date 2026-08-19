@@ -11,8 +11,21 @@ export default function NewMealPage() {
   const [formData, setFormData] = useState({
     name: "",
     price: "",
+    category: "",
     dietaryTags: [] as string[],
   });
+
+  const categories = [
+    "Pollo",
+    "Carnes",
+    "Arroces",
+    "Sopas",
+    "Lasaña",
+    "Acompañamientos",
+    "Ensaladas",
+    "Bebidas",
+    "Postres",
+  ];
 
   const allTags = [
     { slug: "vegan", name: "Vegano", emoji: "🌱" },
@@ -46,6 +59,7 @@ export default function NewMealPage() {
           name: formData.name,
           description: "",
           price: parseFloat(formData.price),
+          category: formData.category || undefined,
           dietaryTags: formData.dietaryTags.length > 0 ? formData.dietaryTags : undefined,
         }),
       });
@@ -109,6 +123,22 @@ export default function NewMealPage() {
               className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
               placeholder="₡ 5000"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-lt-charcoal/70">
+              Categoría
+            </label>
+            <select
+              value={formData.category}
+              onChange={(e) => setFormData((p) => ({ ...p, category: e.target.value }))}
+              className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
+            >
+              <option value="">Sin categoría</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
           </div>
         </div>
 

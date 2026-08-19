@@ -9,6 +9,7 @@ interface Meal {
   id: string;
   name: string;
   price: string;
+  category: string | null;
   dietaryTags: string | null;
 }
 
@@ -271,58 +272,99 @@ export default function WeeklyMenuManager({
           Elige los platillos que estarán disponibles esta semana
         </p>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {allMeals.map((meal) => {
-            const isSelected = selectedMeals.includes(meal.id);
-            const tagSlugs = meal.dietaryTags
-              ? meal.dietaryTags.split(",").map((t) => t.trim())
-              : [];
+        <div className="mt-4 space-y-6">
+          {(() => {
+            // Group meals by category
+            const grouped = allMeals.reduce<Record<string, Meal[]>>((acc, meal) => {
+              const cat = meal.category || "Sin categoría";
+              if (!acc[cat]) acc[cat] = [];
+              acc[cat].push(meal);
+              return acc;
+            }, {});
 
-            return (
-              <button
-                key={meal.id}
-                type="button"
-                onClick={() => toggleMeal(meal.id)}
-                className={`flex items-center gap-3 rounded-xl border-2 p-4 text-left transition-all ${
-                  isSelected
-                    ? "border-lt-terracotta bg-lt-terracotta/5"
-                    : "border-lt-cream-dark hover:border-lt-charcoal/20"
-                }`}
-              >
-                <div
-                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
-                    isSelected
-                      ? "border-lt-terracotta bg-lt-terracotta text-white"
-                      : "border-lt-cream-dark"
-                  }`}
-                >
-                  {isSelected && <span className="text-xs">✓</span>}
+            const categoryOrder = [
+              "Pollo",
+              "Carnes",
+              "Arroces",
+              "Sopas",
+              "Lasaña",
+              "Acompañamientos",
+              "Ensaladas",
+              "Bebidas",
+              "Postres",
+              "Sin categoría",
+            ];
+
+            const sortedCategories = Object.keys(grouped).sort((a, b) => {
+              const ai = categoryOrder.indexOf(a);
+              const bi = categoryOrder.indexOf(b);
+              const aIdx = ai === -1 ? 999 : ai;
+              const bIdx = bi === -1 ? 999 : bi;
+              return aIdx - bIdx;
+            });
+
+            return sortedCategories.map((category) => (
+              <div key={category}>
+                <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-lt-charcoal/50">
+                  {category}
+                </h3>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {grouped[category].map((meal) => {
+                    const isSelected = selectedMeals.includes(meal.id);
+                    const tagSlugs = meal.dietaryTags
+                      ? meal.dietaryTags.split(",").map((t) => t.trim())
+                      : [];
+
+                    return (
+                      <button
+                        key={meal.id}
+                        type="button"
+                        onClick={() => toggleMeal(meal.id)}
+                        className={`flex items-center gap-3 rounded-xl border-2 p-4 text-left transition-all ${
+                          isSelected
+                            ? "border-lt-terracotta bg-lt-terracotta/5"
+                            : "border-lt-cream-dark hover:border-lt-charcoal/20"
+                        }`}
+                      >
+                        <div
+                          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
+                            isSelected
+                              ? "border-lt-terracotta bg-lt-terracotta text-white"
+                              : "border-lt-cream-dark"
+                          }`}
+                        >
+                          {isSelected && <span className="text-xs">✓</span>}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-lt-warm-brown truncate">
+                            {meal.name}
+                          </p>
+                          <p className="text-xs font-semibold text-lt-terracotta">
+                            {formatCRC(meal.price)}
+                          </p>
+                          {tagSlugs.length > 0 && (
+                            <div className="mt-1 flex flex-wrap gap-1">
+                              {tagSlugs.map((slug) => {
+                                const tag = tags.find((t) => t.slug === slug);
+                                return (
+                                  <span key={slug} className="text-xs text-lt-charcoal/50">
+                                    {tag?.emoji} {tag?.name}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-lt-warm-brown truncate">
-                    {meal.name}
-                  </p>
-                  <p className="text-xs font-semibold text-lt-terracotta">
-                    {formatCRC(meal.price)}
-                  </p>
-                  {tagSlugs.length > 0 && (
-                    <div className="mt-1 flex flex-wrap gap-1">
-                      {tagSlugs.map((slug) => {
-                        const tag = tags.find((t) => t.slug === slug);
-                        return (
-                          <span key={slug} className="text-xs text-lt-charcoal/50">
-                            {tag?.emoji} {tag?.name}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              </button>
-            );
-          })}
+              </div>
+            ));
+          })()}
+
           {allMeals.length === 0 && (
-            <div className="col-span-full py-8 text-center">
+            <div className="py-8 text-center">
               <p className="text-sm text-lt-charcoal/60">
                 No hay platillos activos. Crea platillos primero.
               </p>

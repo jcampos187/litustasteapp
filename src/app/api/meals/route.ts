@@ -32,6 +32,7 @@ export async function POST(request: Request) {
         name: parsed.name,
         description: parsed.description || "",
         price: parsed.price.toString(),
+        category: parsed.category ?? null,
         portionSize: parsed.portionSize ?? null,
         calories: parsed.calories ?? null,
         proteinG: parsed.proteinG ?? null,
