@@ -8,7 +8,7 @@ import { z } from "zod";
 const bulkMealItemSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   description: z.string().optional().default(""),
-  price: z.number().positive("El precio debe ser positivo"),
+  price: z.number().positive("El precio debe ser positivo").nullable().optional(),
   category: z.string().optional().nullable(),
   portionSize: z.string().optional().nullable(),
   calories: z.number().int().positive().optional().nullable(),
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         parsed.map((item) => ({
           name: item.name,
           description: item.description || "",
-          price: item.price.toString(),
+          price: item.price?.toString() ?? null,
           category: item.category ?? null,
           portionSize: item.portionSize ?? null,
           calories: item.calories ?? null,

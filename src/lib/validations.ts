@@ -54,7 +54,7 @@ export const createMealSchema = z.object({
     .string()
     .max(500, "La descripción no puede exceder 500 caracteres")
     .default(""),
-  price: z.number().positive("El precio debe ser positivo"),
+  price: z.number().positive("El precio debe ser positivo").nullable().optional(),
   category: z.string().max(50).nullable().optional(),
   portionSize: z
     .string()

@@ -8,7 +8,7 @@ import { formatCRC } from "@/lib/utils";
 interface Meal {
   id: string;
   name: string;
-  price: string;
+  price: string | null;
   category: string | null;
   dietaryTags: string | null;
 }
@@ -339,9 +339,11 @@ export default function WeeklyMenuManager({
                           <p className="text-sm font-medium text-lt-warm-brown truncate">
                             {meal.name}
                           </p>
-                          <p className="text-xs font-semibold text-lt-terracotta">
-                            {formatCRC(meal.price)}
-                          </p>
+                          {meal.price && (
+                            <p className="text-xs font-semibold text-lt-terracotta">
+                              {formatCRC(meal.price)}
+                            </p>
+                          )}
                           {tagSlugs.length > 0 && (
                             <div className="mt-1 flex flex-wrap gap-1">
                               {tagSlugs.map((slug) => {

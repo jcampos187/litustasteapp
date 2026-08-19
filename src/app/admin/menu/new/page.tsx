@@ -110,20 +110,22 @@ export default function NewMealPage() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-lt-charcoal/70">
-              Precio (₡) *
-            </label>
-            <input
-              type="number"
-              required
-              min="0"
-              value={formData.price}
-              onChange={(e) => setFormData((p) => ({ ...p, price: e.target.value }))}
-              className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
-              placeholder="₡ 5000"
-            />
-          </div>
+          {/* Price field hidden for now — will be enabled later */}
+          {false && (
+            <div>
+              <label className="block text-sm font-medium text-lt-charcoal/70">
+                Precio (₡)
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={formData.price}
+                onChange={(e) => setFormData((p) => ({ ...p, price: e.target.value }))}
+                className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
+                placeholder="₡ 5000"
+              />
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-lt-charcoal/70">
@@ -176,7 +178,7 @@ export default function NewMealPage() {
           </Link>
           <button
             type="submit"
-            disabled={isSubmitting || !formData.name || !formData.price}
+            disabled={isSubmitting || !formData.name}
             className="flex items-center gap-2 rounded-xl bg-lt-terracotta px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-lt-terracotta-dark disabled:opacity-50"
           >
             <Save className="h-4 w-4" />

@@ -44,7 +44,7 @@ export const meals = pgTable("meals", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   description: text("description").notNull(),
-  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }),
   currency: text("currency").default("CRC").notNull(),
   portionSize: text("portion_size"),
   imageUrl: text("image_url"),

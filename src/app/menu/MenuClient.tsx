@@ -13,7 +13,7 @@ interface MenuItem {
   id: string;
   name: string;
   description: string;
-  price: string;
+  price: string | null;
   currency: string;
   portionSize: string | null;
   imageUrl: string | null;
@@ -239,11 +239,13 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
                 )}
 
                 {/* Price badge */}
-                <div className="absolute right-1.5 top-1.5 rounded-md bg-white/90 px-1.5 py-0.5 shadow-sm backdrop-blur-sm">
-                  <span className="text-[11px] font-bold text-lt-terracotta">
-                    {formatCRC(item.price)}
-                  </span>
-                </div>
+                {item.price && (
+                  <div className="absolute right-1.5 top-1.5 rounded-md bg-white/90 px-1.5 py-0.5 shadow-sm backdrop-blur-sm">
+                    <span className="text-[11px] font-bold text-lt-terracotta">
+                      {formatCRC(item.price)}
+                    </span>
+                  </div>
+                )}
 
                 {/* Cart quantity badge */}
                 {cartItem && (
@@ -347,7 +349,7 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
                       addItem({
                         mealId: item.id,
                         mealName: item.name,
-                        price: parseFloat(item.price),
+                        price: item.price ? parseFloat(item.price) : 0,
                         imageUrl: item.imageUrl,
                         portionSize: item.portionSize || undefined,
                       })

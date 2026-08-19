@@ -9,7 +9,7 @@ interface Meal {
   id: string;
   name: string;
   description: string;
-  price: string;
+  price: string | null;
   category: string | null;
   portionSize: string | null;
   calories: number | null;
@@ -70,7 +70,7 @@ export default function EditMealForm({ meal, allTags }: { meal: Meal; allTags: D
         body: JSON.stringify({
           name: formData.name,
           description: "",
-          price: parseFloat(formData.price),
+          price: formData.price ? parseFloat(formData.price) : null,
           category: formData.category || undefined,
           dietaryTags: formData.dietaryTags.length > 0 ? formData.dietaryTags : undefined,
           isActive: formData.isActive,
@@ -117,17 +117,19 @@ export default function EditMealForm({ meal, allTags }: { meal: Meal; allTags: D
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-lt-charcoal/70">Precio (₡) *</label>
-            <input
-              type="number"
-              required
-              min="0"
-              value={formData.price}
-              onChange={(e) => setFormData((p) => ({ ...p, price: e.target.value }))}
-              className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
-            />
-          </div>
+          {/* Price field hidden for now — will be enabled later */}
+          {false && (
+            <div>
+              <label className="block text-sm font-medium text-lt-charcoal/70">Precio (₡)</label>
+              <input
+                type="number"
+                min="0"
+                value={formData.price ?? ""}
+                onChange={(e) => setFormData((p) => ({ ...p, price: e.target.value }))}
+                className="mt-1.5 w-full rounded-xl border border-lt-cream-dark bg-white px-4 py-2.5 text-sm outline-none focus:border-lt-terracotta/50 focus:ring-2 focus:ring-lt-terracotta/10"
+              />
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-lt-charcoal/70">Categoría</label>
@@ -191,7 +193,7 @@ export default function EditMealForm({ meal, allTags }: { meal: Meal; allTags: D
           </Link>
           <button
             type="submit"
-            disabled={isSubmitting || !formData.name || !formData.price}
+            disabled={isSubmitting || !formData.name}
             className="flex items-center gap-2 rounded-xl bg-lt-terracotta px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-lt-terracotta-dark disabled:opacity-50"
           >
             <Save className="h-4 w-4" />

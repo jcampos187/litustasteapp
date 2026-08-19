@@ -68,7 +68,7 @@ export async function PUT(
       .set({
         name: parsed.name,
         description: parsed.description,
-        price: parsed.price.toString(),
+        price: parsed.price?.toString() ?? null,
         category: parsed.category ?? null,
         portionSize: parsed.portionSize ?? null,
         calories: parsed.calories ?? null,

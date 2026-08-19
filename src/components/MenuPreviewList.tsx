@@ -12,7 +12,7 @@ interface PreviewItem {
   id: string;
   name: string;
   description: string;
-  price: string;
+  price: string | null;
   currency: string;
   imageUrl: string | null;
   calories: number | null;
@@ -70,11 +70,13 @@ export default function MenuPreviewList({ items, tags }: MenuPreviewListProps) {
                 <h3 className="truncate text-base font-bold text-lt-warm-brown sm:text-lg">
                   {item.name}
                 </h3>
-                <span className="shrink-0 text-base font-bold text-lt-terracotta sm:text-lg">
-                  ₡{parseInt(item.price).toLocaleString()}
-                </span>
+                {item.price && (
+                  <span className="shrink-0 text-base font-bold text-lt-terracotta sm:text-lg">
+                    ₡{parseInt(item.price).toLocaleString()}
+                  </span>
+                )}
               </div>
-              {cartItem && (
+              {cartItem && item.price && (
                 <span className="mt-0.5 block text-right text-[11px] font-semibold text-lt-warm-brown/60">
                   Subtotal: ₡{(parseInt(item.price) * cartItem.quantity).toLocaleString()} ({cartItem.quantity} unid.)
                 </span>
@@ -155,8 +157,7 @@ export default function MenuPreviewList({ items, tags }: MenuPreviewListProps) {
                   onClick={() =>
                     addItem({
                       mealId: item.id,
-                      mealName: item.name,
-                      price: parseFloat(item.price),
+                      mealName: item.name,                        price: item.price ? parseFloat(item.price) : 0,
                       imageUrl: item.imageUrl,
                       portionSize: undefined,
                     })

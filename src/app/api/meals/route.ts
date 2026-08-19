@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       .values({
         name: parsed.name,
         description: parsed.description || "",
-        price: parsed.price.toString(),
+        price: parsed.price?.toString() ?? null,
         category: parsed.category ?? null,
         portionSize: parsed.portionSize ?? null,
         calories: parsed.calories ?? null,

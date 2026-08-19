@@ -84,9 +84,11 @@ export default async function AdminMenuPage() {
                       </span>
                     )}
                   </div>
-                  <p className="mt-0.5 text-sm font-semibold text-lt-terracotta">
-                    {formatCRC(meal.price)}
-                  </p>
+                  {meal.price && (
+                    <p className="mt-0.5 text-sm font-semibold text-lt-terracotta">
+                      {formatCRC(meal.price)}
+                    </p>
+                  )}
                   {meal.portionSize && (
                     <p className="text-xs text-lt-charcoal/50">
                       {meal.portionSize}
