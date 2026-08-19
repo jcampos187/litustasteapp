@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, SlidersHorizontal, Plus, Minus, Trash2, LogIn } from "lucide-react";
+import { Search, SlidersHorizontal, Plus, Minus, Trash2, ShoppingCart } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { useCart } from "@/components/CartProvider";
 import ConfirmModal from "@/components/ConfirmModal";
@@ -120,8 +120,32 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
         )}
       </div>
 
+      {/* Guest login banner */}
+      {!isSignedIn && (
+        <div className="mt-6 flex items-center justify-center gap-3 rounded-xl border border-lt-terracotta/20 bg-lt-terracotta/5 px-5 py-3">
+          <ShoppingCart className="h-4 w-4 text-lt-terracotta" />
+          <p className="text-sm text-lt-charcoal/70">
+            ¿Quieres ordenar?{' '}
+            <Link
+              href="/auth/sign-in"
+              className="font-semibold text-lt-terracotta underline underline-offset-2 hover:text-lt-terracotta-dark"
+            >
+              Inicia sesión
+            </Link>{' '}
+            o{' '}
+            <Link
+              href="/auth/sign-up"
+              className="font-semibold text-lt-terracotta underline underline-offset-2 hover:text-lt-terracotta-dark"
+            >
+              crea una cuenta
+            </Link>{' '}
+            para agregar platillos al carrito.
+          </p>
+        </div>
+      )}
+
       {/* Filters */}
-      <div className="mt-10">
+      <div className="mt-6">
         {/* Search + Filter toggle */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative flex-1 max-w-md">
@@ -276,15 +300,7 @@ export default function MenuClient({ menu, items, tags }: MenuClientProps) {
 
               {/* Add to cart / quantity controls */}
               <div className="border-t border-lt-card-border p-2 sm:p-2.5">
-                {!isSignedIn ? (
-                  <Link
-                    href="/auth/sign-in"
-                    className="flex w-full items-center justify-center gap-1 rounded-lg border border-lt-terracotta/30 bg-lt-terracotta/5 py-1.5 text-[10px] font-semibold text-lt-terracotta transition-all hover:border-lt-terracotta hover:bg-lt-terracotta/10"
-                  >
-                    <LogIn className="h-3 w-3" />
-                    Inicia sesión
-                  </Link>
-                ) : cartItem ? (
+                {cartItem ? (
                   <div className="flex items-center justify-center gap-1">
                     <button
                       onClick={() => {
