@@ -8,6 +8,7 @@ interface ParsedMeal {
   name: string;
   description: string;
   price: number;
+  category: string | null;
   calories: number | null;
   proteinG: number | null;
   carbsG: number | null;
@@ -22,12 +23,12 @@ interface BulkImportModalProps {
   onSuccess: () => void;
 }
 
-const EXAMPLE_CSV = `name,price,tags
-Pollo Teriyaki,3500,high-protein
-Bowl de Quinoa,4200,vegan`;
+const EXAMPLE_CSV = `name,price,category,tags
+Pollo Teriyaki,3500,Pollo,high-protein
+Bowl de Quinoa,4200,Arroces,vegan`;
 
-const TEMPLATE_CSV = `name,price,tags
-Escribe aquí el nombre,3500,etiqueta-1`;
+const TEMPLATE_CSV = `name,price,category,tags
+Escribe aquí el nombre,3500,Pollo,etiqueta-1`;
 
 function parseCSVLine(line: string): string[] {
   const result: string[] = [];
@@ -77,6 +78,7 @@ export default function BulkImportModal({ onClose, onSuccess }: BulkImportModalP
     // Find column indices
     const nameIdx = headers.findIndex((h) => h === "name");
     const priceIdx = headers.findIndex((h) => h === "price");
+    const categoryIdx = headers.findIndex((h) => h === "category" || h === "categoría" || h === "categoria");
     const tagsIdx = headers.findIndex((h) => h === "tags");
 
     if (nameIdx === -1 || priceIdx === -1) {
@@ -98,6 +100,9 @@ export default function BulkImportModal({ onClose, onSuccess }: BulkImportModalP
       const priceRaw = cols[priceIdx]?.replace(/[₡$,]/g, "") || "";
       const price = parseFloat(priceRaw);
 
+      // Parse category
+      const category = categoryIdx >= 0 ? (cols[categoryIdx] || null) : null;
+
       // Parse tags (comma-separated in the tags column)
       let tags: string[] = [];
       if (tagsIdx >= 0 && cols[tagsIdx]) {
@@ -114,6 +119,7 @@ export default function BulkImportModal({ onClose, onSuccess }: BulkImportModalP
         name,
         description: "",  // not required in bulk import
         price: isNaN(price) ? 0 : price,
+        category,
         calories: null,
         proteinG: null,
         carbsG: null,
@@ -145,6 +151,7 @@ export default function BulkImportModal({ onClose, onSuccess }: BulkImportModalP
             name: m.name,
             description: m.description,
             price: m.price,
+            category: m.category || undefined,
             portionSize: m.portionSize || null,
             calories: m.calories,
             proteinG: m.proteinG,
@@ -230,7 +237,7 @@ export default function BulkImportModal({ onClose, onSuccess }: BulkImportModalP
                   </p>
                   <p className="mt-1 text-xs text-lt-charcoal/60">
                     Copia desde tu hoja de cálculo o escribe en formato CSV. Solo necesitas las columnas{" "}
-                    <strong>name</strong>, <strong>price</strong> y opcionalmente <strong>tags</strong>.
+                    <strong>name</strong>, <strong>price</strong> y opcionalmente <strong>category</strong> y <strong>tags</strong>.
                   </p>
                   <pre className="mt-3 overflow-x-auto rounded-lg bg-white/80 p-3 text-[11px] leading-relaxed text-lt-charcoal/70">
                     {EXAMPLE_CSV}
@@ -308,6 +315,7 @@ export default function BulkImportModal({ onClose, onSuccess }: BulkImportModalP
                         <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-lt-charcoal/50">Precio</th>
                         <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-lt-charcoal/50">Cal</th>
                         <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-lt-charcoal/50">Prot</th>
+                        <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-lt-charcoal/50">Categoría</th>
                         <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-lt-charcoal/50">Tags</th>
                         <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-lt-charcoal/50">Estado</th>
                       </tr>
@@ -332,6 +340,9 @@ export default function BulkImportModal({ onClose, onSuccess }: BulkImportModalP
                           </td>
                           <td className="px-4 py-3 text-xs text-lt-charcoal/60">
                             {meal.proteinG ?? "—"}g
+                          </td>
+                          <td className="px-4 py-3 text-xs text-lt-charcoal/60">
+                            {meal.category || "—"}
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex flex-wrap gap-1">

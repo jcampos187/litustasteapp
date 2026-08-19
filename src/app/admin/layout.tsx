@@ -32,8 +32,12 @@ export default async function AdminLayout({
       .limit(1);
   }
 
-  // Only admin role can access dashboard
-  if (!dbUser || dbUser.role !== "admin") {
+  // Check admin role: DB first, then Clerk public metadata as fallback
+  // (handles race condition where webhook hasn't synced yet)
+  const dbAdmin = dbUser && dbUser.role === "admin";
+  const clerkAdmin = clerkUser?.publicMetadata?.role === "admin";
+
+  if (!dbAdmin && !clerkAdmin) {
     redirect("/");
   }
 
