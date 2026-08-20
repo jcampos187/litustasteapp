@@ -67,11 +67,13 @@ export default async function AdminApprovalsPage() {
                     userId={user.id}
                     action="approve"
                     clerkId={user.clerkId}
+                    userName={`${user.name || ""} ${user.lastName || ""}`.trim() || user.email}
                   />
                   <ApproveUserButton
                     userId={user.id}
                     action="decline"
                     clerkId={user.clerkId}
+                    userName={`${user.name || ""} ${user.lastName || ""}`.trim() || user.email}
                   />
                 </div>
               </div>

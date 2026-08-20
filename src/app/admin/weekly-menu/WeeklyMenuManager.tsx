@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Save, Trash2, Send } from "lucide-react";
 import { formatCRC } from "@/lib/utils";
+import ConfirmModal from "@/components/ConfirmModal";
 
 interface Meal {
   id: string;
@@ -47,6 +48,11 @@ export default function WeeklyMenuManager({
   const [selectedMeals, setSelectedMeals] = useState<string[]>(initialMenuItems);
   const [isSaving, setIsSaving] = useState(false);
   const [showSchedule, setShowSchedule] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{
+    type: "publish" | "archive" | "notify";
+    title: string;
+    message: string;
+  } | null>(null);
   /**
    * Get the Monday of the current week
    */
@@ -155,6 +161,7 @@ export default function WeeklyMenuManager({
       // Handle error
     } finally {
       setIsSaving(false);
+      setConfirmAction(null);
     }
   };
 
@@ -171,6 +178,7 @@ export default function WeeklyMenuManager({
       // Handle error
     } finally {
       setIsSaving(false);
+      setConfirmAction(null);
     }
   };
 
@@ -180,7 +188,16 @@ export default function WeeklyMenuManager({
       router.refresh();
     } catch {
       // Handle error
+    } finally {
+      setConfirmAction(null);
     }
+  };
+
+  const executeConfirm = () => {
+    if (!confirmAction) return;
+    if (confirmAction.type === "publish") handleSave(true);
+    else if (confirmAction.type === "archive") handleArchive();
+    else if (confirmAction.type === "notify") handleNotify();
   };
 
   return (
@@ -392,7 +409,16 @@ export default function WeeklyMenuManager({
             Guardar Borrador
           </button>
           <button
-            onClick={() => handleSave(true)}
+            onClick={() => {
+              const count = selectedMeals.length;
+              setConfirmAction({
+                type: "publish",
+                title: currentMenu?.isPublished ? "Actualizar Menú" : "Publicar Menú",
+                message: currentMenu?.isPublished
+                  ? `¿Actualizar el menú publicado con ${count} platillo${count !== 1 ? "s" : ""}? Los clientes verán los cambios inmediatamente.`
+                  : `¿Publicar el menú semanal con ${count} platillo${count !== 1 ? "s" : ""}? Los clientes podrán ver y ordenar estos platillos.`,
+              });
+            }}
             disabled={isSaving || selectedMeals.length === 0}
             className="flex items-center gap-2 rounded-xl bg-lt-terracotta px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-lt-terracotta-dark disabled:opacity-50"
           >
@@ -404,7 +430,13 @@ export default function WeeklyMenuManager({
         <div className="flex items-center gap-3">
           {currentMenu?.isPublished && (
             <button
-              onClick={handleNotify}
+              onClick={() =>
+                setConfirmAction({
+                  type: "notify",
+                  title: "Notificar a Clientes",
+                  message: "¿Enviar notificación push a todos los clientes suscritos sobre el nuevo menú? Esta acción no se puede deshacer.",
+                })
+              }
               className="flex items-center gap-2 rounded-xl border border-lt-olive/30 bg-lt-olive/5 px-5 py-2.5 text-sm font-medium text-lt-olive-dark transition-all hover:bg-lt-olive/10"
             >
               <Send className="h-4 w-4" />
@@ -413,7 +445,13 @@ export default function WeeklyMenuManager({
           )}
           {currentMenu && (
             <button
-              onClick={handleArchive}
+              onClick={() =>
+                setConfirmAction({
+                  type: "archive",
+                  title: "Archivar Menú",
+                  message: "¿Archivar este menú? Los clientes ya no podrán ver ni ordenar estos platillos. Esta acción no se puede deshacer.",
+                })
+              }
               className="flex items-center gap-2 rounded-xl border border-red-200 px-5 py-2.5 text-sm font-medium text-red-500 transition-all hover:bg-red-50"
             >
               <Trash2 className="h-4 w-4" />
@@ -422,6 +460,23 @@ export default function WeeklyMenuManager({
           )}
         </div>
       </div>
+      {/* Confirm Modal */}
+      <ConfirmModal
+        isOpen={!!confirmAction}
+        onClose={() => setConfirmAction(null)}
+        onConfirm={executeConfirm}
+        title={confirmAction?.title ?? ""}
+        message={confirmAction?.message ?? ""}
+        confirmLabel={
+          confirmAction?.type === "archive"
+            ? "Archivar"
+            : confirmAction?.type === "notify"
+            ? "Enviar Notificación"
+            : "Publicar"
+        }
+        variant={confirmAction?.type === "archive" ? "danger" : "info"}
+        isLoading={isSaving}
+      />
     </div>
   );
 }
