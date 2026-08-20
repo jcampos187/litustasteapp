@@ -9,7 +9,7 @@ export default function Footer() {
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-3">
           <img
-                src="/logo.png"
+                src="/logo.webp"
                 alt="Litus Taste"
                 className="h-10 w-10 rounded-xl object-contain"
               />

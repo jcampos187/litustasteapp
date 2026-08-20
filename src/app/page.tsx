@@ -90,7 +90,7 @@ export default async function Home() {
           {/* Left: Content */}
           <div className="flex-1 text-center lg:max-w-xl lg:text-left xl:max-w-2xl">
             {/* Premium badge — glassmorphism */}
-            <div className="mb-8 inline-flex animate-fade-in-down items-center gap-2.5 rounded-full border border-lt-green/20 bg-white/90 px-5 py-2 shadow-lg shadow-lt-green/10 backdrop-blur-md">
+            <div className="mb-8 inline-flex items-center gap-2.5 rounded-full border border-lt-green/20 bg-white/90 px-5 py-2 shadow-lg shadow-lt-green/10 backdrop-blur-md">
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-lt-green to-lt-green-light text-xs text-white">🌿</span>
               <span className="text-sm font-medium text-lt-olive-dark">
                 Comida preparada fresca — Recibe en tu casa
@@ -98,7 +98,7 @@ export default async function Home() {
             </div>
 
             {/* Main heading — serif display */}
-            <h1 className="animate-fade-in-up font-[family-name:var(--font-display)] text-4xl font-semibold leading-[1.1] tracking-tight text-lt-warm-brown sm:text-5xl md:text-6xl lg:text-7xl">
+            <h1 className="font-[family-name:var(--font-display)] text-4xl font-semibold leading-[1.1] tracking-tight text-lt-warm-brown sm:text-5xl md:text-6xl lg:text-7xl">
               Tu comida de la
               <br />
               <span className="lt-gradient-text">semana, preparada</span>
@@ -107,13 +107,13 @@ export default async function Home() {
             </h1>
 
             {/* Subtitle */}
-            <p className="mx-auto mt-6 max-w-2xl animate-fade-in-up text-base leading-relaxed text-lt-charcoal/65 delay-100 sm:text-lg lg:mx-0">
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-lt-charcoal/65 sm:text-lg lg:mx-0">
               Menú semanal fresco, saludable y delicioso. Elige tus platillos
               favoritos y recibe todo listo para calentar y disfrutar.
             </p>
 
             {/* CTA Buttons */}
-            <div className="mt-10 flex animate-fade-in-up flex-col items-center gap-4 delay-200 sm:flex-row lg:justify-start">
+            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start">
               <Link
                 href="/menu"
                 className="lt-btn group relative inline-flex h-14 w-full items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-lt-green px-9 text-base font-semibold text-white shadow-xl shadow-lt-green/25 transition-all hover:bg-lt-green-deep hover:shadow-2xl hover:shadow-lt-green/30 sm:w-auto"
@@ -135,7 +135,7 @@ export default async function Home() {
             </div>
 
             {/* Trust indicators */}
-            <div className="mt-14 flex animate-fade-in-up flex-wrap items-center justify-center gap-8 text-xs text-lt-charcoal/40 delay-300 lg:justify-start">
+            <div className="mt-14 flex flex-wrap items-center justify-center gap-8 text-xs text-lt-charcoal/40 lg:justify-start">
               <span className="flex items-center gap-1.5">
                 <span className="text-sm">🥗</span> Ingredientes frescos
               </span>
@@ -153,7 +153,7 @@ export default async function Home() {
 
           {/* Right: Large brand logo display */}
           <div className="mt-12 w-full flex-1 lg:mt-0 lg:flex lg:items-center lg:justify-center lg:max-w-none">
-            <div className="animate-fade-in-up flex flex-col items-center gap-5" style={{ animationDelay: "0.2s" }}>
+            <div className="flex flex-col items-center gap-5">
               <div className="lt-hero-frame">
                 <div className="lt-img-shine relative flex h-[240px] w-[240px] items-center justify-center overflow-hidden rounded-[18px] bg-gradient-to-br from-lt-green-pale/20 to-lt-amber/10 shadow-2xl shadow-lt-green/15 sm:h-[300px] sm:w-[300px] lg:h-[380px] lg:w-[380px]">
                   <img

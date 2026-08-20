@@ -39,11 +39,24 @@ export default function ScrollReveal({
   as: Tag = "section",
 }: ScrollRevealProps) {
   const ref = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  // Start visible to match SSR render (prevents flash on hydration)
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    // Check if element is already in the viewport on mount
+    const rect = el.getBoundingClientRect();
+    const isAboveFold = rect.bottom > 0 && rect.top < window.innerHeight;
+
+    if (isAboveFold) {
+      // Already visible — no animation needed
+      return;
+    }
+
+    // Below fold: start hidden, animate in when scrolled to
+    setIsVisible(false);
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -64,7 +77,7 @@ export default function ScrollReveal({
   return (
     <Tag
       ref={ref}
-      className={`${className} sr-hidden transition-all ${variantStyles[variant]} ${
+      className={`${className} transition-all ${variantStyles[variant]} ${
         isVisible ? "!opacity-100 !translate-y-0 !translate-x-0 !scale-100" : "opacity-0"
       }`}
       style={{ transitionDuration: `${duration}ms`, transitionDelay: `${delay}ms` }}
